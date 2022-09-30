@@ -7,31 +7,68 @@ import java.io.*;
 import java.text.Normalizer;
 import java.util.*;
 
-import static jdk.internal.net.http.Http1Exchange.State.HEADERS;
-
 public class Main {
-    protected static final String easy_path = ("src" + File.separatorChar + "main" + File.separatorChar + "java" + File.separatorChar + "input" + File.separatorChar + "input.txt");
-    protected static final String[] header = {"WORD", "CONTADOR"};
+    protected static final String initial_path = "src" + File.separatorChar + "main" + File.separatorChar + "java" + File.separatorChar + "input" + File.separatorChar;
+    protected static String input = "";
+    protected static String input_converted = "";
 
-    public static void main(String[] args) {
-        leeryNormalizarTexto(easy_path);
+    static {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println(
+                "Introduzca el nombre del archivo. Recuerde, que debe estar situado dentro del Proyecto en: \n" +
+                        "\n" +
+                        "         " + initial_path +
+                        "\n" +
+                        "\ncon el contenido que desea procesar. No indicar la extension, pero debe ser (.txt) para que funcione" +
+                        "\n" +
+                        "\n!!!WARNING: Sensible a las Mayusculas y Minusculas"
+        );
+        System.out.println();
+        input = sc.nextLine();
+        input_converted = input + ".txt";
+
+        clean(5);
+    }
+
+    protected static final String output = "src" + File.separatorChar + "main" + File.separatorChar + "java" + File.separatorChar + "output" + File.separatorChar + input + "_histograma.cvs";
+
+
+    protected static final String path = (initial_path + input_converted);
+    protected static final String[] header = {"PALABRA", "VECES REPETIDAS"};
+
+    public static void main(String[] args) throws Exception {
+        var listado = new LinkedHashMap<String, Integer>();
+        listado = leeryNormalizarTexto(path);
+        uploadToCSV(listado);
 
     }
 
-    static void leeryNormalizarTexto(String origen) {
+    static LinkedHashMap<String, Integer> leeryNormalizarTexto(String origen) {
+        LinkedHashMap<String, Integer> listaPalabras = null;
+
         try (var br = new BufferedReader(new FileReader(origen));) {
 
             ArrayList<String> all_text = new ArrayList<String>();
             ArrayList<String> all_text_mod = new ArrayList<String>();
             String value = "";
-
+            listaPalabras = new LinkedHashMap<>();
+            String final_text = "";
             while (br.ready()) {
                 value = br.readLine();
                 if (value != null) {
-
+                    final_text += value + "\n";
                     all_text.addAll(List.of(value.split(" ")));
                 }
             }
+            clean(1);
+            System.out.println("*************");
+            System.out.println("El texto es: ");
+            System.out.println("*************");
+            System.out.println("-----------------------------------------------------------------------------------------------------");
+            System.out.println(final_text);
+            System.out.println("-----------------------------------------------------------------------------------------------------");
+            clean(10);
 
             String normalized_element = "";
             for (String element : all_text) {
@@ -46,7 +83,7 @@ public class Main {
             Collections.sort(all_text_mod);
 
             // Permite guardar las palabras ordenadas alfabeticamente
-            LinkedHashMap<String, Integer> listaPalabras = new LinkedHashMap<>();
+
             for (String k : all_text_mod) {
                 listaPalabras.put(k, 0);
             }
@@ -60,12 +97,29 @@ public class Main {
                 // Guardamos la informacion en el HasMap() ordenado -> En esta variable se encuentran los datos que exportaremos a un archivo CSV
                 listaPalabras.put(s, veces);
             }
+            System.out.println("---------");
+            System.out.println("Listado: ");
+            System.out.println();
+            listaPalabras.forEach((k, v) -> {
+                System.out.println(k + " -> " + v);
+            });
+            System.out.println("---------");
+            clean(14);
 
-            System.out.println(listaPalabras);
+
+            System.out.println("<<----------------------------------------------------->>");
+            System.out.println("    El archivo ha sido guardado en: " +
+                    "\n\n" +
+                    "               " + output +
+                    "\n");
+
+            System.out.println("    Numero de Palabras diferentes: " + listaPalabras.size());
+            System.out.println("<<----------------------------------------------------->>");
 
         } catch (Exception e) {
             System.out.println(e);
         }
+        return listaPalabras;
     }
 
     static public String normalizar(String text) {
@@ -78,7 +132,8 @@ public class Main {
     static public String washing(String text) {
         String word = text;
         word = word.replaceAll("\\p{Punct}", "");
-        word = word.replaceAll("[? ¡]", "");
+        word = word.replaceAll("[? ¡ « »]", "");
+        word = word.replaceAll("[— + / *]", "");
         word = word.replaceAll("[0-9]", "");
         return word;
     }
@@ -94,11 +149,26 @@ public class Main {
         return permitido;
     }
 
-    static public void uploadToCSV() throws Exception {
-        try (var out = new FileWriter("example.csv"); var printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader(header))) {
-
+    static public void uploadToCSV(LinkedHashMap<String, Integer> element) throws Exception {
+        try (var out = new FileWriter(output); var printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader(header))) {
+            element.forEach((k, v) -> {
+                try {
+                    printer.printRecord(k, v);
+                } catch (IOException e) {
+                    System.out.println(e);
+                    ;
+                }
+            });
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public static void clean(Integer max) {
+        for (int i = 0; i < max; i++) {
+            System.out.println(".");
+
+        }
+
     }
 }
