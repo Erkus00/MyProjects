@@ -1,11 +1,17 @@
 package files.run;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
 import java.io.*;
 import java.text.Normalizer;
 import java.util.*;
 
+import static jdk.internal.net.http.Http1Exchange.State.HEADERS;
+
 public class Main {
     protected static final String easy_path = ("src" + File.separatorChar + "main" + File.separatorChar + "java" + File.separatorChar + "input" + File.separatorChar + "input.txt");
+    protected static final String[] header = {"WORD", "CONTADOR"};
 
     public static void main(String[] args) {
         leeryNormalizarTexto(easy_path);
@@ -86,5 +92,13 @@ public class Main {
             }
         }
         return permitido;
+    }
+
+    static public void uploadToCSV() throws Exception {
+        try (var out = new FileWriter("example.csv"); var printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader(header))) {
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
