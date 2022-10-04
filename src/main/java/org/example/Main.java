@@ -44,9 +44,99 @@ public class Main {
 
     public static void main(String[] args) {
 
+        Integer opcion = menuInicio();
+        Boolean salir = false;
+
+        while (!salir) {
+            Integer elector = 0;
+            Boolean salir_sub = false;
+            cleanDot(5);
+
+            switch (opcion) {
+                case 0:
+                    salir = true;
+                    salir();
+                    break;
+                case 1:
+                    elector = menuConsulta();
+
+                    while (!salir_sub) {
+                        cleanDot(3);
+                        switch (elector) {
+                            case 0:
+                                salir_sub = true;
+                                break;
+                            case 1:
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                break;
+                            case 5:
+                                break;
+                            default:
+                                clean(5);
+                                System.out.println("Opcion no disponible");
+                                clean(3);
+                                break;
+                        }
+                    }
+                    break;
+                case 2:
+                    elector = menuMod();
+                    while (!salir_sub) {
+                        cleanDot(3);
+                        switch (elector) {
+                            case 0:
+                                salir_sub = true;
+                                break;
+                            case 1:
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                            default:
+                                clean(5);
+                                System.out.println("Opcion no disponible");
+                                clean(3);
+                                break;
+                        }
+                    }
+                    break;
+                case 3:
+                    elector = menuIngreso();
+                    while (!salir_sub) {
+                        cleanDot(3);
+                        switch (elector) {
+                            case 0:
+                                salir_sub = true;
+                                break;
+                            case 1:
+                                break;
+                            case 2:
+                                break;
+                            default:
+                                clean(5);
+                                System.out.println("Opcion no disponible");
+                                clean(3);
+                                break;
+                        }
+                    }
+                    break;
+                default:
+                    clean(3);
+                    System.out.println("Opcion no disponible");
+                    break;
+            }
+            clean(10);
+        }
+
     }
 
-    // -------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------//
     // Funciones CRUD (Create, Read, Delete and Update
 
     // Funciones de crear Datos (Create)
@@ -62,6 +152,18 @@ public class Main {
     static Boolean crearPedido() {
         Boolean finalizado = false;
         return finalizado;
+    }
+
+    /**
+     * Permite crear un nuevo Producto
+     *
+     * @return <ul>
+     * <li><i>True</i>: Si se ha podido Crear</li>
+     * <li><i>False</i>: Si ha habido algun error</li>
+     * </ul>
+     */
+    static Boolean crearProducto() {
+
     }
 
     // Funciones de Eliminar Datos (Delete)
@@ -169,17 +271,20 @@ public class Main {
     /**
      * Muestra todas las comandas hechas desde el principio:
      *
-     * @return Lista con la informacion de todos los pedidos. De cada Pedido:
+     * @return Hashmap con:
      * <ul>
+     *     <li><b>Key: </b> Id del Pedido</li>
+     *     <li><b>Value: </b><ul>
      *     <li>Fecha</li>
      *     <li>Cliente</li>
      *     <li>Estado</li>
      *     <li>Productos comprados</li>
      *     <li>Precio total del pedido</li>
+     * </ul></li>
      * </ul>
      */
 
-    static ArrayList<String> listarPedidos() {
+    static HashMap<Integer, String> listarPedidos() {
 
     }
 
@@ -187,15 +292,18 @@ public class Main {
      * Muestra todas las comandas de una fecha en concreto
      *
      * @param fecha Fecha de la cual se desean obtener las comandas
-     * @return Lista la id  de todos los pedidos de una fecha en concreto. De cada Pedido:
+     * @return Hashmap con:
      * <ul>
+     *     <li><b>Key: </b> Id del Pedido</li>
+     *     <li><b>Value: </b><ul>
      *     <li>Cliente</li>
      *     <li>Estado</li>
      *     <li>Productos comprados</li>
      *     <li>Precio total del pedido</li>
+     * </ul></li>
      * </ul>
      */
-    static ArrayList<String> listarPedidos(Date fecha) {
+    static HashMap<Integer, String> listarPedidos(Date fecha) {
 
     }
 
@@ -210,7 +318,7 @@ public class Main {
      *     <li><b>Value: </b>Fecha en la que se realizó la comanda</li>
      * </ul>
      */
-    static HashMap<Integer, Date> pedidos(String nombre_alumno) {
+    static HashMap<Integer, Date> pedidosAlumno(String nombre_alumno) {
     }
 
     /**
@@ -236,13 +344,14 @@ public class Main {
 
     /**
      * Muestra el menu inicial de acciones del programa por consola. En este podrá elegir si desea:
-     * <ol>
-     *     <li>Consultar Datos</li>
-     *     <li>Modificar Datos</li>
-     *     <li>Ingresar Datos</li>
-     * </ol>
+     * <ul>
+     *     <li>0. Salir del programa</li>
+     *     <li>1. Consultar Datos</li>
+     *     <li>2. Modificar Datos</li>
+     *     <li>3. Ingresar Datos</li>
+     * </ul>
      *
-     * @return La opcion seleccionada (1, 2, 3 ó salir)
+     * @return La opcion seleccionada
      */
     static Integer menuInicio() {
         Scanner sc = new Scanner(System.in);
@@ -251,11 +360,11 @@ public class Main {
             primera_vez = false;
 
         }
-        clean(50);
+        clean(10);
         System.out.println("<<                                                        >>");
         System.out.println("Indique que desea hacer:");
         clean(2);
-        System.out.println("0. Salir");
+        System.out.println("0. Salir del programa");
         System.out.println("1. Consultar Datos");
         System.out.println("2. Modificar Datos");
         System.out.println("3. Ingresar Datos");
@@ -266,22 +375,90 @@ public class Main {
 
     }
 
+    /**
+     * Muestra el menu de las opciones de consulta a la base de datos. Estas serian:
+     * <ul>
+     *     <li>0. Salir al menu principal</li>
+     *     <li>1. Listar comandas pendientes de un dia (Hoy de manera predeterminada)</li>
+     *     <li>2. Mostrar todas las comandas pendientes</li>
+     *     <li>3. Mostrar todas las comandas, pendientes y recogidas, dado un tramo</li>
+     *     <li>4. Mostrar Carta</li>
+     *     <li>5. Ver pedidos de un Alumno</li>
+     * </ul>
+     *
+     * @return
+     */
     static Integer menuConsulta() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Menu de Consulta");
+        System.out.println("<<           >>");
+        cleanDot(2);
+        System.out.println("0. Salir al menu principal");
+        System.out.println("1. Listar comandas pendientes de un dia");
+        System.out.println("2. Mostrar todas las comandas pendientes");
+        System.out.println("3. Mostrar todas las comandas, pendientes y recogidas, dado un tramo");
+        System.out.println("4. Mostrar Carta");
+        System.out.println("5. Mostrar los pedidos de un Alumno");
+        Integer opcion = sc.nextInt();
+        sc.close();
+        return opcion;
 
     }
 
+    /**
+     * Muestra el menu de las opciones de modificacion a la base de datos. Estas serian:
+     * <ul>
+     *     <li>0. Salir al menu principal</li>
+     *     <li>1. Eliminar pedido</li>
+     *     <li>2. Marcar pedido como recogido</li>
+     *     <li>3. Modificar Pedido</li>
+     * </ul>
+     *
+     * @return opcion seleccionada
+     */
     static Integer menuMod() {
-
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Menu de Modificacion");
+        System.out.println("<<                >>");
+        cleanDot(2);
+        System.out.println("0. Salir al menu principal");
+        System.out.println("1. Eliminar Pedido");
+        System.out.println("2. Marcar pedido como Recogido");
+        System.out.println("3. Modificar Pedido");
+        Integer opcion = sc.nextInt();
+        sc.close();
+        return opcion;
     }
 
+    /**
+     * Muestra el menu de las opciones de insercion a la base de datos. Estas serian:
+     * <ul>
+     *     <li>0. Salir al menu principal</li>
+     *     <li>1. Hacer pedido (Previamente muestra la carta)</li>
+     *     <li>2. Insertar Producto</li>
+     * </ul>
+     *
+     * @return opcion seleccionada
+     */
     static Integer menuIngreso() {
-
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Menu de Ingreso");
+        System.out.println("<<           >>");
+        cleanDot(2);
+        System.out.println("0. Salir al menu principal");
+        System.out.println("1. Hacer Pedido");
+        System.out.println("2. Insertar Producto");
+        Integer opcion = sc.nextInt();
+        sc.close();
+        return opcion;
     }
 
+    /**
+     * Limpa la pantalla y muestra mensaje de despedida del programa
+     */
     static void salir() {
         cleanDot(100);
         System.out.println("Gracias por Usarme");
-        System.out.println("=UwU=");
     }
 
     /**
