@@ -16,9 +16,9 @@ package org.example;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.sql.Statement;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
     public static Connection con;
@@ -118,6 +118,8 @@ public class Main {
                                 break;
                             case 2:
                                 break;
+                            case 3:
+                                break;
                             default:
                                 clean(5);
                                 System.out.println("Opcion no disponible");
@@ -137,9 +139,103 @@ public class Main {
     }
 
     // -------------------------------------------------------------------------------------------------------------------------------------------------------//
+    //Funciones de gestion
+
+    static void gestionProducto() {
+
+        LinkedHashMap<Integer, LinkedHashMap<String, Object>> insercion_productos = new LinkedHashMap<>();
+        Boolean salir = false;
+        String nombre = "";
+        Integer tipo = 0;
+        Float precio = (float) 0;
+        Integer cantidad = 0;
+        String correcto = "";
+        Integer cont = 0;
+        AtomicReference<Boolean> insertado = null;
+        while (!salir) {
+
+            LinkedHashMap<String, Object> producto = new LinkedHashMap<>();
+
+            System.out.println("Indique el nombre del producto");
+            nombre = leerString();
+
+            System.out.println("Indique el Tipo");
+            System.out.println("1. Bebida");
+            System.out.println("2. Panaderia");
+            System.out.println("3. Bolleria");
+            System.out.println("4. Lacteo");
+            System.out.println("5. Otro");
+            tipo = leerInt();
+
+            System.out.println("Indique el precio €");
+            precio = leerFloat();
+
+            System.out.println("Indique el numero de elementos que desea añadir, despues podrá modificarlos");
+            cantidad = leerInt();
+
+            System.out.println("Especificaciones del producto");
+            System.out.println("Nombre: " + nombre);
+            System.out.println("Tipo: " + leerTipo(tipo));
+            System.out.println("Precio " + precio);
+            System.out.println("Elementos añadidos: " + cantidad);
+
+            System.out.println("¿Son correctos estos parámetros? [y/n]");
+            correcto = leerString().toLowerCase();
+
+            if (correcto == "y") {
+                producto.put("nombre", nombre);
+                producto.put("tipo", leerTipo(tipo));
+                producto.put("precio", precio);
+                producto.put("cantidad", cantidad);
+                cont++;
+                insercion_productos.put(cont, producto);
+            }
+
+            System.out.println("¿Desea añadir otro producto[y/n]?");
+            correcto = leerString().toLowerCase();
+            if (correcto != "y") {
+                insercion_productos.forEach((k, v) -> {
+                    insertado.set(insertarProducto(v));
+
+                    if (insertado.get()) {
+                        System.out.println(" Insertado correctamente");
+                    } else {
+                        System.out.println("Se ha producido un error en la insercion de un nuevo Producto");
+                    }
+                });
+            }
+
+        }
+
+    }
+
+    static String leerTipo(Integer tipo) {
+        String tense = "";
+        switch (tipo) {
+            case 1:
+                tense = "bebida";
+                break;
+            case 2:
+                tense = "panaderia";
+                break;
+            case 3:
+                tense = "bolleria";
+                break;
+            case 4:
+                tense = "lacteo";
+                break;
+            case 5:
+                tense = "otro";
+                break;
+            default:
+                break;
+        }
+        return tense;
+    }
+
     // Funciones CRUD (Create, Read, Delete and Update
 
-    // Funciones de crear Datos (Create)
+    // Funciones de insercion de Datos (Create)
 
     /**
      * Permite crear un nuevo Pedido siempre que el producto se encuentre disponible
@@ -149,7 +245,7 @@ public class Main {
      * <li><i>False</i>: Si ha habido un error a la hora de crear el pedido</li>
      * </ul>
      */
-    static Boolean crearPedido() {
+    static Boolean insertarPedido() {
         Boolean finalizado = false;
         return finalizado;
     }
@@ -162,8 +258,11 @@ public class Main {
      * <li><i>False</i>: Si ha habido algun error</li>
      * </ul>
      */
-    static Boolean crearProducto() {
-
+    static Boolean insertarProducto(LinkedHashMap<String, Object> producto) {
+        Boolean finalizado = false;
+        try(Statement st = new  {
+        })
+        return finalizado;
     }
 
     // Funciones de Eliminar Datos (Delete)
@@ -425,6 +524,7 @@ public class Main {
         System.out.println("1. Eliminar Pedido");
         System.out.println("2. Marcar pedido como Recogido");
         System.out.println("3. Modificar Pedido");
+        System.out.println();
         Integer opcion = sc.nextInt();
         sc.close();
         return opcion;
@@ -435,7 +535,8 @@ public class Main {
      * <ul>
      *     <li>0. Salir al menu principal</li>
      *     <li>1. Hacer pedido (Previamente muestra la carta)</li>
-     *     <li>2. Insertar Producto</li>
+     *     <li>2. Insertar Nuevo Producto</li>
+     *     <li>3. Rellenar Stock de un Producto existente</li>
      * </ul>
      *
      * @return opcion seleccionada
@@ -447,7 +548,8 @@ public class Main {
         cleanDot(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Hacer Pedido");
-        System.out.println("2. Insertar Producto");
+        System.out.println("2. Insertar Nuevo Producto");
+        System.out.println("3. Rellenar Stock de un Producto existente");
         Integer opcion = sc.nextInt();
         sc.close();
         return opcion;
@@ -481,5 +583,41 @@ public class Main {
         for (Integer i = 0; i < max; i++) {
             System.out.println(".");
         }
+    }
+
+    /**
+     * Lee un Integer introducido por teclado
+     *
+     * @return El valor recogido
+     */
+    static Integer leerInt() {
+        Scanner sc = new Scanner(System.in);
+        Integer x = sc.nextInt();
+        sc.close();
+        return x;
+    }
+
+    /**
+     * Lee un String introducido por teclado
+     *
+     * @return El valor recogido
+     */
+    static String leerString() {
+        Scanner sc = new Scanner(System.in);
+        String x = sc.nextLine();
+        sc.close();
+        return x;
+    }
+
+    /**
+     * Lee un Float introducido por teclado
+     *
+     * @return El valor recogido
+     */
+    static Float leerFloat() {
+        Scanner sc = new Scanner(System.in);
+        Float x = sc.nextFloat();
+        sc.close();
+        return x;
     }
 }
