@@ -42,10 +42,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Integer opcion = menuInicio();
+
         boolean salir = false;
 
         while (!salir) {
+            Integer opcion = menuInicio();
             Integer elector = 0;
             Boolean salir_sub = false;
             cleanDot(5);
@@ -56,9 +57,10 @@ public class Main {
                     salir();
                     break;
                 case 1:
-                    elector = menuConsulta();
+
 
                     while (!salir_sub) {
+                        elector = menuConsulta();
                         cleanDot(3);
                         switch (elector) {
                             case 0:
@@ -88,8 +90,9 @@ public class Main {
                     }
                     break;
                 case 2:
-                    elector = menuMod();
+
                     while (!salir_sub) {
+                        elector = menuMod();
                         cleanDot(3);
                         switch (elector) {
                             case 0:
@@ -116,8 +119,8 @@ public class Main {
                     }
                     break;
                 case 3:
-                    elector = menuIngreso();
                     while (!salir_sub) {
+                        elector = menuIngreso();
                         clean(3);
                         switch (elector) {
                             case 0:
@@ -145,7 +148,7 @@ public class Main {
                     System.out.println("Opcion no disponible");
                     break;
             }
-            clean(10);
+
         }
 
     }
@@ -155,7 +158,7 @@ public class Main {
 
     static void gestionProducto() {
 
-        Boolean salir = false;
+        boolean salir = false;
         String nombre = "";
         Integer tipo = 0;
         float precio = 0.0F;
@@ -209,7 +212,7 @@ public class Main {
                 System.out.println("Producto no ha sido insertado");
             }
 
-            System.out.println("¿Desea añadir otro producto[y/n]?");
+            System.out.println("¿Desea añadir otro producto [y/n]?");
             String otro = leerString().toLowerCase();
 
             if (otro.equals("n")) {
@@ -255,7 +258,7 @@ public class Main {
      * </ul>
      */
     static boolean insertarPedido() {
-        Boolean finalizado = false;
+        boolean finalizado = false;
         return finalizado;
     }
 
@@ -269,16 +272,18 @@ public class Main {
      */
     static boolean insertarProducto(LinkedHashMap<String, Object> producto) {
         boolean finalizado = false;
-        String sql_query = "INSERT INTO carta (nombre,tipo,precio,disponibilidad) VALUES (?,?,?,?);";
+
+        String sql_query = "INSERT INTO carta (nombre,tipo,precio,cantidad,disponibilidad) VALUES (?,?,?,?,?);";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
             pst.setString(1, producto.get("nombre").toString());
             pst.setString(2, producto.get("tipo").toString());
             pst.setFloat(3, (float) producto.get("precio"));
+            pst.setInt(4, (Integer) producto.get("cantidad"));
 
             if ((Integer) producto.get("cantidad") > 0) {
-                pst.setBoolean(4, true);
+                pst.setBoolean(5, true);
             } else {
-                pst.setBoolean(4, false);
+                pst.setBoolean(5, false);
             }
             pst.executeUpdate();
             finalizado = true;
