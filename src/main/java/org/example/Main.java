@@ -13,10 +13,8 @@
 
 package org.example;
 
-import java.sql.Connection;
+import java.sql.*;
 import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -45,7 +43,7 @@ public class Main {
     public static void main(String[] args) {
 
         Integer opcion = menuInicio();
-        Boolean salir = false;
+        boolean salir = false;
 
         while (!salir) {
             Integer elector = 0;
@@ -67,14 +65,19 @@ public class Main {
                                 salir_sub = true;
                                 break;
                             case 1:
+                                System.out.println("Listar Comandas pendientes de un dia");
                                 break;
                             case 2:
+                                System.out.println("Mostrar todas las comandas pendientes");
                                 break;
                             case 3:
+                                System.out.println("Mostrar comandas Pendientes");
                                 break;
                             case 4:
+                                System.out.println("Mostrar comandas de un tramo");
                                 break;
                             case 5:
+                                System.out.println("Ver pedidos de un Alumno");
                                 break;
                             default:
                                 clean(5);
@@ -93,10 +96,16 @@ public class Main {
                                 salir_sub = true;
                                 break;
                             case 1:
+                                System.out.println("Eliminar Pedido");
                                 break;
                             case 2:
+                                System.out.println("Marcar pedido como recogido");
                                 break;
                             case 3:
+                                System.out.println("Modificar Pedido");
+                                break;
+                            case 4:
+                                System.out.println("Modificar Producto");
                                 break;
                             default:
                                 clean(5);
@@ -109,16 +118,19 @@ public class Main {
                 case 3:
                     elector = menuIngreso();
                     while (!salir_sub) {
-                        cleanDot(3);
+                        clean(3);
                         switch (elector) {
                             case 0:
                                 salir_sub = true;
                                 break;
                             case 1:
+                                System.out.println("Hacer Pedido");
                                 break;
                             case 2:
+                                gestionProducto();
                                 break;
                             case 3:
+                                System.out.println("Rellenar Stock");
                                 break;
                             default:
                                 clean(5);
@@ -147,11 +159,12 @@ public class Main {
         Boolean salir = false;
         String nombre = "";
         Integer tipo = 0;
-        Float precio = (float) 0;
+        float precio = 0.0F;
         Integer cantidad = 0;
         String correcto = "";
         Integer cont = 0;
-        AtomicReference<Boolean> insertado = null;
+        boolean insertado = false;
+
         while (!salir) {
 
             LinkedHashMap<String, Object> producto = new LinkedHashMap<>();
@@ -167,7 +180,7 @@ public class Main {
             System.out.println("5. Otro");
             tipo = leerInt();
 
-            System.out.println("Indique el precio €");
+            System.out.println("Indique el precio € -- (Formato Ejemplo: 1,5) --");
             precio = leerFloat();
 
             System.out.println("Indique el numero de elementos que desea añadir, despues podrá modificarlos");
@@ -176,37 +189,35 @@ public class Main {
             System.out.println("Especificaciones del producto");
             System.out.println("Nombre: " + nombre);
             System.out.println("Tipo: " + leerTipo(tipo));
-            System.out.println("Precio " + precio);
+            System.out.println("Precio: " + precio + "€");
             System.out.println("Elementos añadidos: " + cantidad);
 
             System.out.println("¿Son correctos estos parámetros? [y/n]");
             correcto = leerString().toLowerCase();
 
             if (correcto == "y") {
-                producto.put("nombre", nombre);
+                producto.put("nombre", nombre.toLowerCase());
                 producto.put("tipo", leerTipo(tipo));
                 producto.put("precio", precio);
                 producto.put("cantidad", cantidad);
                 cont++;
                 insercion_productos.put(cont, producto);
             }
+            insertado = insertarProducto(producto);
 
-            System.out.println("¿Desea añadir otro producto[y/n]?");
-            correcto = leerString().toLowerCase();
-            if (correcto != "y") {
-                insercion_productos.forEach((k, v) -> {
-                    insertado.set(insertarProducto(v));
-
-                    if (insertado.get()) {
-                        System.out.println(" Insertado correctamente");
-                    } else {
-                        System.out.println("Se ha producido un error en la insercion de un nuevo Producto");
-                    }
-                });
+            if (insertado) {
+                System.out.println("Producto insertado correctamente");
+            } else {
+                System.out.println("Producto no ha sido insertado");
             }
 
-        }
+            System.out.println("¿Desea añadir otro producto[y/n]?");
+            String otro = leerString().toLowerCase();
 
+            if (otro != "y") {
+                salir = true;
+            }
+        }
     }
 
     static String leerTipo(Integer tipo) {
@@ -245,7 +256,7 @@ public class Main {
      * <li><i>False</i>: Si ha habido un error a la hora de crear el pedido</li>
      * </ul>
      */
-    static Boolean insertarPedido() {
+    static boolean insertarPedido() {
         Boolean finalizado = false;
         return finalizado;
     }
@@ -259,9 +270,24 @@ public class Main {
      * </ul>
      */
     static Boolean insertarProducto(LinkedHashMap<String, Object> producto) {
-        Boolean finalizado = false;
-        try(Statement st = new  {
-        })
+        boolean finalizado = false;
+        String sql_query = "INSERT INTO carta (nombre,tipo,precio,disponibilidad) VALUES (?,?,?,?);";
+        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
+            pst.setString(1, producto.get("nombre").toString());
+            pst.setString(2, producto.get("tipo").toString());
+            pst.setFloat(3, (float) producto.get("precio"));
+
+            if ((Integer) producto.get("cantidad") > 0) {
+                pst.setBoolean(3, true);
+            } else {
+                pst.setBoolean(3, false);
+            }
+            pst.executeUpdate();
+            finalizado = true;
+        } catch (Exception e) {
+            System.out.println(e);
+            finalizado = false;
+        }
         return finalizado;
     }
 
@@ -275,8 +301,8 @@ public class Main {
      * <li><i>False</i>: Si ha habido un error a la hora de eliminar el pedido</li>
      * </ul>
      */
-    static Boolean eliminarPedido() {
-        Boolean finalizado = false;
+    static boolean eliminarPedido() {
+        boolean finalizado = false;
         return finalizado;
     }
 
@@ -290,8 +316,8 @@ public class Main {
      * <li><i>False</i>: Si se ha producido un error a la hora de recoger el pedido</li>
      * </ul>
      */
-    static Boolean marcarPedidoRecogido(Integer id_pedido) {
-        Boolean finalizado = false;
+    static boolean marcarPedidoRecogido(Integer id_pedido) {
+        boolean finalizado = false;
         return finalizado;
     }
 
@@ -304,9 +330,9 @@ public class Main {
      *
      * @return Listado de la informacion detallada de todos los productos
      */
-    static ArrayList<String> listarProductos() {
-
-    }
+//    static ArrayList<String> listarProductos() {
+//
+//    }
 
     /**
      * Lista aquellos productos que están disponibles y su precio
@@ -317,8 +343,8 @@ public class Main {
      *     <li><b>Value: </b>Valor del Producto</li>
      * </ul>
      */
-    static HashMap<String, Integer> carta() {
-    }
+//    static HashMap<String, Integer> carta() {
+//    }
 
     /**
      * Muestra toda la informacion de un producto de la carta
@@ -332,9 +358,9 @@ public class Main {
      *     <li>Disponibilidad</li>
      * </ul>
      */
-    static String infoProducto(Integer id_producto) {
-
-    }
+//    static String infoProducto(Integer id_producto) {
+//
+//    }
 
 
     /**
@@ -346,9 +372,9 @@ public class Main {
      * <li><i>False</i>: Si el producto no está disponible</li>
      * </ul>
      */
-    static Boolean obtenerDisponibilidadProducto(Integer id_producto) {
-
-    }
+//    static Boolean obtenerDisponibilidadProducto(Integer id_producto) {
+//
+//    }
 
     /**
      * Muestra toda la informacion de una comanda sin importar su estado
@@ -363,9 +389,9 @@ public class Main {
      *     <li>Precio total del pedido</li>
      * </ul>
      */
-    static String infoPedido(Integer id_pedido) {
-
-    }
+//    static String infoPedido(Integer id_pedido) {
+//
+//    }
 
     /**
      * Muestra todas las comandas hechas desde el principio:
@@ -383,9 +409,9 @@ public class Main {
      * </ul>
      */
 
-    static HashMap<Integer, String> listarPedidos() {
-
-    }
+//    static HashMap<Integer, String> listarPedidos() {
+//
+//    }
 
     /**
      * Muestra todas las comandas de una fecha en concreto
@@ -402,9 +428,9 @@ public class Main {
      * </ul></li>
      * </ul>
      */
-    static HashMap<Integer, String> listarPedidos(Date fecha) {
-
-    }
+//    static HashMap<Integer, String> listarPedidos(Date fecha) {
+//
+//    }
 
 
     /**
@@ -417,17 +443,17 @@ public class Main {
      *     <li><b>Value: </b>Fecha en la que se realizó la comanda</li>
      * </ul>
      */
-    static HashMap<Integer, Date> pedidosAlumno(String nombre_alumno) {
-    }
+//    static HashMap<Integer, Date> pedidosAlumno(String nombre_alumno) {
+//    }
 
     /**
      * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente
      *
      * @return Listado de la id de todos aquellos pedidos que se encuentran pendientes
      */
-    static ArrayList<Integer> pedidosPendientes() {
-
-    }
+//    static ArrayList<Integer> pedidosPendientes() {
+//
+//    }
 
     /**
      * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente de una fecha en concreto
@@ -435,9 +461,9 @@ public class Main {
      * @param fecha Fecha de la que se desea obtener el listado
      * @return Listado de la id de todos aquellos pedidos que se encuentran pendientes.
      */
-    static ArrayList<Integer> pedidosPendientes(Date fecha) {
-
-    }
+//    static ArrayList<Integer> pedidosPendientes(Date fecha) {
+//
+//    }
 
     // Funciones Auxiliares
 
@@ -454,23 +480,24 @@ public class Main {
      */
     static Integer menuInicio() {
         Scanner sc = new Scanner(System.in);
+        cleanDot(4);
         if (primera_vez) {
+            System.out.println("<<                                                        >>");
             System.out.println("BIENVENIDO AL PROGRAMA DE GESTION DE LOS DESAYUNOS DEL CESUR");
             primera_vez = false;
-
+            System.out.println("<<                                                        >>");
+        } else {
+            System.out.println("<<                                                        >>");
         }
-        clean(10);
-        System.out.println("<<                                                        >>");
+        clean(1);
         System.out.println("Indique que desea hacer:");
         clean(2);
         System.out.println("0. Salir del programa");
         System.out.println("1. Consultar Datos");
         System.out.println("2. Modificar Datos");
         System.out.println("3. Ingresar Datos");
-        clean(3);
-        Integer eleccion = sc.nextInt();
-        sc.close();
-        return eleccion;
+        clean(1);
+        return sc.nextInt();
 
     }
 
@@ -491,16 +518,15 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.println("Menu de Consulta");
         System.out.println("<<           >>");
-        cleanDot(2);
+        clean(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Listar comandas pendientes de un dia");
         System.out.println("2. Mostrar todas las comandas pendientes");
         System.out.println("3. Mostrar todas las comandas, pendientes y recogidas, dado un tramo");
         System.out.println("4. Mostrar Carta");
         System.out.println("5. Mostrar los pedidos de un Alumno");
-        Integer opcion = sc.nextInt();
-        sc.close();
-        return opcion;
+        System.out.println();
+        return sc.nextInt();
 
     }
 
@@ -511,6 +537,7 @@ public class Main {
      *     <li>1. Eliminar pedido</li>
      *     <li>2. Marcar pedido como recogido</li>
      *     <li>3. Modificar Pedido</li>
+     *     <li>4. Modificar producto de la carta</li>
      * </ul>
      *
      * @return opcion seleccionada
@@ -519,15 +546,14 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.println("Menu de Modificacion");
         System.out.println("<<                >>");
-        cleanDot(2);
+        clean(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Eliminar Pedido");
         System.out.println("2. Marcar pedido como Recogido");
         System.out.println("3. Modificar Pedido");
+        System.out.println("4. Modificar Producto de la carta");
         System.out.println();
-        Integer opcion = sc.nextInt();
-        sc.close();
-        return opcion;
+        return sc.nextInt();
     }
 
     /**
@@ -543,16 +569,16 @@ public class Main {
      */
     static Integer menuIngreso() {
         Scanner sc = new Scanner(System.in);
+
         System.out.println("Menu de Ingreso");
         System.out.println("<<           >>");
-        cleanDot(2);
+        clean(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Hacer Pedido");
         System.out.println("2. Insertar Nuevo Producto");
         System.out.println("3. Rellenar Stock de un Producto existente");
-        Integer opcion = sc.nextInt();
-        sc.close();
-        return opcion;
+        System.out.println();
+        return sc.nextInt();
     }
 
     /**
@@ -592,9 +618,7 @@ public class Main {
      */
     static Integer leerInt() {
         Scanner sc = new Scanner(System.in);
-        Integer x = sc.nextInt();
-        sc.close();
-        return x;
+        return sc.nextInt();
     }
 
     /**
@@ -604,20 +628,19 @@ public class Main {
      */
     static String leerString() {
         Scanner sc = new Scanner(System.in);
-        String x = sc.nextLine();
-        sc.close();
-        return x;
+        return sc.nextLine();
     }
 
     /**
-     * Lee un Float introducido por teclado
+     * Lee un Double introducido por teclado
      *
      * @return El valor recogido
      */
-    static Float leerFloat() {
+    static float leerFloat() {
         Scanner sc = new Scanner(System.in);
-        Float x = sc.nextFloat();
-        sc.close();
-        return x;
+        float value = 0.0F;
+        value = sc.nextFloat();
+        return value;
+
     }
 }
