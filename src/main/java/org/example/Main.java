@@ -155,7 +155,6 @@ public class Main {
 
     static void gestionProducto() {
 
-        LinkedHashMap<Integer, LinkedHashMap<String, Object>> insercion_productos = new LinkedHashMap<>();
         Boolean salir = false;
         String nombre = "";
         Integer tipo = 0;
@@ -195,15 +194,14 @@ public class Main {
             System.out.println("¿Son correctos estos parámetros? [y/n]");
             correcto = leerString().toLowerCase();
 
-            if (correcto == "y") {
+            if (correcto.equals("y")) {
                 producto.put("nombre", nombre.toLowerCase());
                 producto.put("tipo", leerTipo(tipo));
                 producto.put("precio", precio);
                 producto.put("cantidad", cantidad);
                 cont++;
-                insercion_productos.put(cont, producto);
+                insertado = insertarProducto(producto);
             }
-            insertado = insertarProducto(producto);
 
             if (insertado) {
                 System.out.println("Producto insertado correctamente");
@@ -214,7 +212,7 @@ public class Main {
             System.out.println("¿Desea añadir otro producto[y/n]?");
             String otro = leerString().toLowerCase();
 
-            if (otro != "y") {
+            if (otro.equals("n")) {
                 salir = true;
             }
         }
@@ -269,7 +267,7 @@ public class Main {
      * <li><i>False</i>: Si ha habido algun error</li>
      * </ul>
      */
-    static Boolean insertarProducto(LinkedHashMap<String, Object> producto) {
+    static boolean insertarProducto(LinkedHashMap<String, Object> producto) {
         boolean finalizado = false;
         String sql_query = "INSERT INTO carta (nombre,tipo,precio,disponibilidad) VALUES (?,?,?,?);";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
@@ -278,9 +276,9 @@ public class Main {
             pst.setFloat(3, (float) producto.get("precio"));
 
             if ((Integer) producto.get("cantidad") > 0) {
-                pst.setBoolean(3, true);
+                pst.setBoolean(4, true);
             } else {
-                pst.setBoolean(3, false);
+                pst.setBoolean(4, false);
             }
             pst.executeUpdate();
             finalizado = true;
