@@ -127,7 +127,7 @@ public class Main {
                                 salir_sub = true;
                                 break;
                             case 1:
-                                System.out.println("Hacer Pedido");
+                                gestionPedido();
                                 break;
                             case 2:
                                 gestionProducto();
@@ -148,12 +148,10 @@ public class Main {
                     System.out.println("Opcion no disponible");
                     break;
             }
-
         }
-
     }
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------//
+    // ------------------------------------------------------------------------------------------------------------------------------------------------------- //
     //Funciones de gestion
 
     static void gestionProducto() {
@@ -162,9 +160,7 @@ public class Main {
         String nombre = "";
         Integer tipo = 0;
         float precio = 0.0F;
-        Integer cantidad = 0;
         String correcto = "";
-        Integer cont = 0;
         boolean insertado = false;
 
         while (!salir) {
@@ -185,14 +181,11 @@ public class Main {
             System.out.println("Indique el precio € -- (Formato Ejemplo: 1,5) --");
             precio = leerFloat();
 
-            System.out.println("Indique el numero de elementos que desea añadir, despues podrá modificarlos");
-            cantidad = leerInt();
 
             System.out.println("Especificaciones del producto");
             System.out.println("Nombre: " + nombre);
             System.out.println("Tipo: " + leerTipo(tipo));
             System.out.println("Precio: " + precio + "€");
-            System.out.println("Elementos añadidos: " + cantidad);
 
             System.out.println("¿Son correctos estos parámetros? [y/n]");
             correcto = leerString().toLowerCase();
@@ -201,18 +194,18 @@ public class Main {
                 producto.put("nombre", nombre.toLowerCase());
                 producto.put("tipo", leerTipo(tipo));
                 producto.put("precio", precio);
-                producto.put("cantidad", cantidad);
-                cont++;
                 insertado = insertarProducto(producto);
             }
-
+            clean(3);
             if (insertado) {
                 System.out.println("Producto insertado correctamente");
             } else {
                 System.out.println("Producto no ha sido insertado");
             }
-
+            clean(2);
             System.out.println("¿Desea añadir otro producto [y/n]?");
+            System.out.println("y -> Sí");
+            System.out.println("n -> No");
             String otro = leerString().toLowerCase();
 
             if (otro.equals("n")) {
@@ -245,6 +238,62 @@ public class Main {
         return tense;
     }
 
+    static void gestionPedido() {
+
+        // Lista que guardará como Key: id del producto y como segundo valor el numero de elementos que se desea
+        LinkedHashMap<Integer, Integer> comanda = new LinkedHashMap<>();
+
+        System.out.println("Indique un nombre de pedido");
+        String nombre = leerString();
+
+
+        clean(1);
+        Integer id_producto = 0;
+        Integer cant = 0;
+        String salir = "";
+
+        while (!salir.equals("exit")) {
+            System.out.println("--------------------------------");
+            carta().forEach((k, v) -> {
+
+                System.out.println(k + " || " + infoProducto("nombre", k) + " -> " + v + "€");
+            });
+            System.out.println("--------------------------------");
+            clean(1);
+            System.out.println("Indiqueme el numero de producto");
+            id_producto = leerInt();
+            System.out.println("Cantidad: ");
+            cant = leerInt();
+
+
+            if (!comanda.containsKey(id_producto)) {
+                comanda.put(id_producto, cant);
+
+            } else if (comanda.containsKey(id_producto)) {
+                Integer actualizar_cant = comanda.get(id_producto) + cant;
+                comanda.replace(id_producto, actualizar_cant);
+            }
+            clean(1);
+            comanda.forEach((k, v) -> {
+                System.out.println(infoProducto("nombre", k) + " -> Cantidad: " + v);
+            });
+            clean(3);
+
+            System.out.println("Pulse enter para realizar otra comanda o editar una ya hecha. Escriba 'exit' para pasar continuar");
+            salir = leerString();
+        }
+        cleanDot(4);
+
+        System.out.println("Verifique que los datos a insertar son correctos: ");
+        comanda.forEach((k, v) -> {
+            System.out.println(infoProducto("nombre", k) + " -> Cantidad: " + v);
+        });
+        clean(1);
+
+        recibo();
+
+    }
+
     // Funciones CRUD (Create, Read, Delete and Update
 
     // Funciones de insercion de Datos (Create)
@@ -273,18 +322,13 @@ public class Main {
     static boolean insertarProducto(LinkedHashMap<String, Object> producto) {
         boolean finalizado = false;
 
-        String sql_query = "INSERT INTO carta (nombre,tipo,precio,cantidad,disponibilidad) VALUES (?,?,?,?,?);";
+        String sql_query = "INSERT INTO carta (nombre,tipo,precio,disponibilidad) VALUES (?,?,?,?);";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
             pst.setString(1, producto.get("nombre").toString());
             pst.setString(2, producto.get("tipo").toString());
             pst.setFloat(3, (float) producto.get("precio"));
-            pst.setInt(4, (Integer) producto.get("cantidad"));
+            pst.setBoolean(4, true);
 
-            if ((Integer) producto.get("cantidad") > 0) {
-                pst.setBoolean(5, true);
-            } else {
-                pst.setBoolean(5, false);
-            }
             pst.executeUpdate();
             finalizado = true;
         } catch (Exception e) {
@@ -346,8 +390,20 @@ public class Main {
      *     <li><b>Value: </b>Valor del Producto</li>
      * </ul>
      */
-//    static HashMap<String, Integer> carta() {
-//    }
+    static HashMap<Integer, Float> carta() {
+        HashMap<Integer, Float> carta = new HashMap<>();
+        String sql_query = "SELECT carta.id,carta.precio FROM comanda_desayunos.carta WHERE disponibilidad=1;";
+        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                carta.put(rs.getInt("id"), rs.getFloat("precio"));
+
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return carta;
+    }
 
     /**
      * Muestra toda la informacion de un producto de la carta
@@ -361,9 +417,19 @@ public class Main {
      *     <li>Disponibilidad</li>
      * </ul>
      */
-//    static String infoProducto(Integer id_producto) {
-//
-//    }
+    static String infoProducto(String column, Integer id_producto) {
+        String vuelta = "";
+        String sql_query = "SELECT carta." + column + " FROM comanda_desayunos.carta WHERE id=" + id_producto + ";";
+        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
+            ResultSet rest = pst.executeQuery();
+            while (rest.next()) {
+                vuelta = rest.getString(column);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return vuelta;
+    }
 
 
     /**
@@ -645,5 +711,19 @@ public class Main {
         value = sc.nextFloat();
         return value;
 
+    }
+
+    static Object leer() {
+        Scanner sc = new Scanner(System.in);
+        return sc.nextLine();
+    }
+
+    static boolean hayLectura() {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNextInt()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
