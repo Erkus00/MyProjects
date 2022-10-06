@@ -39,25 +39,25 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         var listado = new LinkedHashMap<String, Integer>();
-        listado = leeryNormalizarTexto(path);
+        listado = leeryNormalizarTexto();
         uploadToCSV(listado);
 
     }
 
-    static LinkedHashMap<String, Integer> leeryNormalizarTexto(String origen) {
+    static LinkedHashMap<String, Integer> leeryNormalizarTexto() {
         LinkedHashMap<String, Integer> listaPalabras = null;
 
-        try (var br = new BufferedReader(new FileReader(origen));) {
+        try (var br = new BufferedReader(new FileReader(Main.path));) {
 
             ArrayList<String> all_text = new ArrayList<String>();
             ArrayList<String> all_text_mod = new ArrayList<String>();
             String value = "";
             listaPalabras = new LinkedHashMap<>();
-            String final_text = "";
+            StringBuilder final_text = new StringBuilder();
             while (br.ready()) {
                 value = br.readLine();
                 if (value != null) {
-                    final_text += value + "\n";
+                    final_text.append(value).append("\n");
                     all_text.addAll(List.of(value.split(" ")));
                 }
             }
@@ -117,7 +117,7 @@ public class Main {
             System.out.println("<<----------------------------------------------------->>");
 
         } catch (Exception e) {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
         return listaPalabras;
     }
@@ -125,25 +125,26 @@ public class Main {
     static public String normalizar(String text) {
 
         String normalized_element = Normalizer.normalize(text, Normalizer.Form.NFKD);
-        normalized_element = normalized_element.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "").toLowerCase();
+        normalized_element = normalized_element.replaceAll("\\p{InCombiningDiacriticalMarks}", "").toLowerCase();
         return normalized_element;
     }
 
     static public String washing(String text) {
         String word = text;
         word = word.replaceAll("\\p{Punct}", "");
-        word = word.replaceAll("[? ¡ « »]", "");
-        word = word.replaceAll("[— + / *]", "");
+        word = word.replaceAll("[?¡«»]", "");
+        word = word.replaceAll("[—+/*]", "");
         word = word.replaceAll("[0-9]", "");
         return word;
     }
 
     static public Boolean permitido(String text) {
         String[] non_util_char = {"con", "por", "los", "las", "que", "del"};
-        Boolean permitido = true;
-        for (String carac : non_util_char) {
-            if (text.equals(carac)) {
+        boolean permitido = true;
+        for (String car : non_util_char) {
+            if (text.equals(car)) {
                 permitido = false;
+                break;
             }
         }
         return permitido;
@@ -155,12 +156,12 @@ public class Main {
                 try {
                     printer.printRecord(k, v);
                 } catch (IOException e) {
-                    System.out.println(e);
-                    ;
+                    throw new RuntimeException(e);
+
                 }
             });
         } catch (Exception e) {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
     }
 
