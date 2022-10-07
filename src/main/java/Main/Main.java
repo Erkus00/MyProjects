@@ -1,44 +1,18 @@
-/**
- * Deberá permitir crear un nuevo pedido /
- * Deberá permitir eliminar un pedido existente /
- * Deberá poder marcar un pedido como recogido /
- * Deberá poder listar solo las comandas pendientes de hoy /
- * Deberá poder listar la carta disponible antes de crear la nueva comanda /
- * Deberá poder listar el total de pedidos asociados a un alumno. /
- * Deberá poder mostrar un resumen con algunos indicadores estadísticos que debéis definir
- * (por ejemplo ganancias del último mes, total de clientes, mejor cliente, total de pedidos en la última semana, producto más vendido,...).
- * La interacción con el usuario se realizará a través de un menú desde linea de comando. /
- */
+package Main;
 
-
-package org.example;
+import Controller.Conexion;
+import Model.Pedido;
+import Model.Producto;
 
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
-    public static Connection con;
-    private static final String URL = "jdbc:mysql://localhost:3306/";
-    private static final String PASS = "toorDam2";
-    private static final String USER = "root";
-
     protected static Boolean primera_vez = true;
+    protected static final Connection con = Conexion.getCon();
 
-    static {
-
-        String database = "comanda_desayunos";
-        try {
-            con = DriverManager.getConnection(URL + database, USER, PASS);
-            System.out.println("Conexion realizada con exito a '" + database + "'");
-        } catch (Exception e) {
-            System.out.println("Problema al conectar con la base de Datos: " + database);
-            System.out.println(e);
-        } finally {
-            System.out.println("Proceso de conexion terminado");
-        }
-    }
 
     public static void main(String[] args) {
 
@@ -47,8 +21,8 @@ public class Main {
 
         while (!salir) {
             Integer opcion = menuInicio();
-            Integer elector = 0;
-            Boolean salir_sub = false;
+            int elector;
+            boolean salir_sub = false;
             cleanDot(5);
 
             switch (opcion) {
@@ -57,35 +31,21 @@ public class Main {
                     salir();
                     break;
                 case 1:
-
-
                     while (!salir_sub) {
                         elector = menuConsulta();
                         cleanDot(3);
                         switch (elector) {
-                            case 0:
-                                salir_sub = true;
-                                break;
-                            case 1:
-                                System.out.println("Listar Comandas pendientes de un dia");
-                                break;
-                            case 2:
-                                System.out.println("Mostrar todas las comandas pendientes");
-                                break;
-                            case 3:
-                                System.out.println("Mostrar comandas Pendientes");
-                                break;
-                            case 4:
-                                System.out.println("Mostrar comandas de un tramo");
-                                break;
-                            case 5:
-                                System.out.println("Ver pedidos de un Alumno");
-                                break;
-                            default:
+                            case 0 -> salir_sub = true;
+                            case 1 -> System.out.println("Listar Comandas pendientes de un dia");
+                            case 2 -> System.out.println("Mostrar todas las comandas pendientes");
+                            case 3 -> System.out.println("Mostrar comandas Pendientes");
+                            case 4 -> System.out.println("Mostrar comandas de un tramo");
+                            case 5 -> System.out.println("Ver pedidos de un Alumno");
+                            default -> {
                                 clean(5);
                                 System.out.println("Opcion no disponible");
                                 clean(3);
-                                break;
+                            }
                         }
                     }
                     break;
@@ -95,26 +55,16 @@ public class Main {
                         elector = menuMod();
                         cleanDot(3);
                         switch (elector) {
-                            case 0:
-                                salir_sub = true;
-                                break;
-                            case 1:
-                                System.out.println("Eliminar Pedido");
-                                break;
-                            case 2:
-                                System.out.println("Marcar pedido como recogido");
-                                break;
-                            case 3:
-                                System.out.println("Modificar Pedido");
-                                break;
-                            case 4:
-                                System.out.println("Modificar Producto");
-                                break;
-                            default:
+                            case 0 -> salir_sub = true;
+                            case 1 -> System.out.println("Eliminar Pedido");
+                            case 2 -> System.out.println("Marcar pedido como recogido");
+                            case 3 -> System.out.println("Modificar Pedido");
+                            case 4 -> System.out.println("Modificar Producto");
+                            default -> {
                                 clean(5);
                                 System.out.println("Opcion no disponible");
                                 clean(3);
-                                break;
+                            }
                         }
                     }
                     break;
@@ -123,23 +73,15 @@ public class Main {
                         elector = menuIngreso();
                         clean(3);
                         switch (elector) {
-                            case 0:
-                                salir_sub = true;
-                                break;
-                            case 1:
-                                gestionPedido();
-                                break;
-                            case 2:
-                                gestionProducto();
-                                break;
-                            case 3:
-                                System.out.println("Rellenar Stock");
-                                break;
-                            default:
+                            case 0 -> salir_sub = true;
+                            case 1 -> gestionPedido();
+                            case 2 -> gestionProducto();
+                            case 3 -> System.out.println("Rellenar Stock");
+                            default -> {
                                 clean(5);
                                 System.out.println("Opcion no disponible");
                                 clean(3);
-                                break;
+                            }
                         }
                     }
                     break;
@@ -165,7 +107,7 @@ public class Main {
 
         while (!salir) {
 
-            LinkedHashMap<String, Object> producto = new LinkedHashMap<>();
+            Producto producto = new Producto();
 
             System.out.println("Indique el nombre del producto");
             nombre = leerString();
@@ -184,113 +126,130 @@ public class Main {
 
             System.out.println("Especificaciones del producto");
             System.out.println("Nombre: " + nombre);
-            System.out.println("Tipo: " + leerTipo(tipo));
+            System.out.println("Tipo: " + Producto.leerTipo(tipo));
             System.out.println("Precio: " + precio + "€");
 
             System.out.println("¿Son correctos estos parámetros? [y/n]");
             correcto = leerString().toLowerCase();
 
             if (correcto.equals("y")) {
-                producto.put("nombre", nombre.toLowerCase());
-                producto.put("tipo", leerTipo(tipo));
-                producto.put("precio", precio);
+                producto.setNombre(nombre.toLowerCase());
+                producto.setTipo(tipo);
+                producto.setPrecio(precio);
+                producto.setDisponible(true);
                 insertado = insertarProducto(producto);
             }
             clean(3);
             if (insertado) {
                 System.out.println("Producto insertado correctamente");
+                System.out.println(producto);
             } else {
                 System.out.println("Producto no ha sido insertado");
             }
             clean(2);
             System.out.println("¿Desea añadir otro producto [y/n]?");
+            cleanDot(1);
             System.out.println("y -> Sí");
             System.out.println("n -> No");
             String otro = leerString().toLowerCase();
-
+            clean(1);
             if (otro.equals("n")) {
                 salir = true;
             }
         }
     }
 
-    static String leerTipo(Integer tipo) {
-        String tense = "";
-        switch (tipo) {
-            case 1:
-                tense = "bebida";
-                break;
-            case 2:
-                tense = "panaderia";
-                break;
-            case 3:
-                tense = "bolleria";
-                break;
-            case 4:
-                tense = "lacteo";
-                break;
-            case 5:
-                tense = "otro";
-                break;
-            default:
-                break;
-        }
-        return tense;
-    }
-
     static void gestionPedido() {
 
-        // Lista que guardará como Key: id del producto y como segundo valor el numero de elementos que se desea
-        LinkedHashMap<Integer, Integer> comanda = new LinkedHashMap<>();
+        // Lista que guardará como Key: el producto y como segundo valor el numero de elementos que se desea
+        LinkedHashMap<Producto, Integer> comanda = new LinkedHashMap<>();
+        Pedido pedido = new Pedido();
 
         System.out.println("Indique un nombre de pedido");
         String nombre = leerString();
 
 
         clean(1);
-        Integer id_producto = 0;
+        Integer id_producto;
         Integer cant = 0;
         String salir = "";
 
         while (!salir.equals("exit")) {
             System.out.println("--------------------------------");
             carta().forEach((k, v) -> {
-
-                System.out.println(k + " || " + infoProducto("nombre", k) + " -> " + v + "€");
+                System.out.println(v.cartaView());
             });
             System.out.println("--------------------------------");
+
+
             clean(1);
             System.out.println("Indiqueme el numero de producto");
             id_producto = leerInt();
             System.out.println("Cantidad: ");
             cant = leerInt();
 
+            if (!comanda.isEmpty()) {
+                Integer checked_producto = id_producto;
+                Integer finalCant = cant;
+                AtomicBoolean nuevo = new AtomicBoolean(true);
 
-            if (!comanda.containsKey(id_producto)) {
-                comanda.put(id_producto, cant);
-
-            } else if (comanda.containsKey(id_producto)) {
-                Integer actualizar_cant = comanda.get(id_producto) + cant;
-                comanda.replace(id_producto, actualizar_cant);
+                comanda.forEach((k, v) -> {
+                    Integer temp = k.getId();
+                    if (Objects.equals(temp, checked_producto)) {
+                        nuevo.set(false);
+                        Integer actualizar_cant = v + finalCant;
+                        comanda.replace(k, actualizar_cant);
+                    }
+                });
+                if (nuevo.get()) {
+                    Producto prod = infoProducto(id_producto);
+                    comanda.put(prod, cant);
+                }
+            } else {
+                Producto prod = infoProducto(id_producto);
+                comanda.put(prod, cant);
             }
+
             clean(1);
             comanda.forEach((k, v) -> {
-                System.out.println(infoProducto("nombre", k) + " -> Cantidad: " + v);
+                System.out.println(k.getNombre() + " -> Cantidad: " + v);
             });
-            clean(3);
+            clean(1);
 
-            System.out.println("Pulse enter para realizar otra comanda o editar una ya hecha. Escriba 'exit' para pasar continuar");
+            System.out.println("Pulse enter para realizar otra comanda. Escriba 'exit' para pasar continuar");
+            System.out.println("En caso de que quiera editar, usar un '-' delante del valor para quitar. Introducir el valor sin signo para sumar a lo ya pedido");
             salir = leerString();
         }
-        cleanDot(4);
 
+        cleanDot(4);
         System.out.println("Verifique que los datos a insertar son correctos: ");
-        comanda.forEach((k, v) -> {
-            System.out.println(infoProducto("nombre", k) + " -> Cantidad: " + v);
+        clean(1);
+        System.out.println("Nombre de pedido: " + nombre);
+        comanda.forEach((k, v) ->
+        {
+            System.out.println(k.getNombre() + " (" + k.getPrecio() + "€)" + " -> Cantidad: " + v);
         });
         clean(1);
-
-        recibo();
+        System.out.println("Pulse 1 para imprimir el recibo. Pulse 0 para salir al menu de ingreso");
+        Integer lect = leerInt();
+        if (lect == 1) {
+            Date now = new Date();
+            java.sql.Date sqlDate = new java.sql.Date(now.getTime());
+            pedido.setCliente(nombre);
+            pedido.setProducto(comanda);
+            pedido.setEstado("pendiente");
+            pedido.setFecha(sqlDate);
+            clean(2);
+            System.out.println("**********************************");
+            pedido.recibo();
+            System.out.println("**********************************");
+            if (insertarPedido(pedido)) {
+                System.out.println("Pedido realizado correctamente");
+            } else {
+                System.out.println("Prblema al realizar el pedido. Intentelo de Nuevo por favor y disculpe las molestias");
+            }
+            clean(1);
+        }
 
     }
 
@@ -306,8 +265,26 @@ public class Main {
      * <li><i>False</i>: Si ha habido un error a la hora de crear el pedido</li>
      * </ul>
      */
-    static boolean insertarPedido() {
+    static boolean insertarPedido(Pedido pedido) {
         boolean finalizado = false;
+
+        String sql_query = "INSERT INTO pedido (fecha,cliente,estado,producto) VALUES (?,?,?,?);";
+        try (PreparedStatement pst = con.prepareStatement(sql_query, Statement.RETURN_GENERATED_KEYS);) {
+            pst.setDate(1, pedido.getFecha());
+            pst.setString(2, pedido.getCliente());
+            pst.setString(3, pedido.getEstado());
+            pst.setInt(4, pedido.isDisponible());
+            pst.executeUpdate();
+            ResultSet generatedKeys = pst.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                Integer id = generatedKeys.getInt(1);
+                producto.setId(id);
+            }
+            finalizado = true;
+        } catch (Exception e) {
+            System.out.println(e);
+            finalizado = false;
+        }
         return finalizado;
     }
 
@@ -319,17 +296,21 @@ public class Main {
      * <li><i>False</i>: Si ha habido algun error</li>
      * </ul>
      */
-    static boolean insertarProducto(LinkedHashMap<String, Object> producto) {
+    static boolean insertarProducto(Producto producto) {
         boolean finalizado = false;
 
         String sql_query = "INSERT INTO carta (nombre,tipo,precio,disponibilidad) VALUES (?,?,?,?);";
-        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
-            pst.setString(1, producto.get("nombre").toString());
-            pst.setString(2, producto.get("tipo").toString());
-            pst.setFloat(3, (float) producto.get("precio"));
-            pst.setBoolean(4, true);
-
+        try (PreparedStatement pst = con.prepareStatement(sql_query, Statement.RETURN_GENERATED_KEYS);) {
+            pst.setString(1, producto.getNombre());
+            pst.setString(2, producto.getTipo());
+            pst.setFloat(3, producto.getPrecio());
+            pst.setBoolean(4, producto.isDisponible());
             pst.executeUpdate();
+            ResultSet generatedKeys = pst.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                Integer id = generatedKeys.getInt(1);
+                producto.setId(id);
+            }
             finalizado = true;
         } catch (Exception e) {
             System.out.println(e);
@@ -390,14 +371,16 @@ public class Main {
      *     <li><b>Value: </b>Valor del Producto</li>
      * </ul>
      */
-    static HashMap<Integer, Float> carta() {
-        HashMap<Integer, Float> carta = new HashMap<>();
-        String sql_query = "SELECT carta.id,carta.precio FROM comanda_desayunos.carta WHERE disponibilidad=1;";
+    static HashMap<Integer, Producto> carta() {
+        HashMap<Integer, Producto> carta = new HashMap<>();
+        Producto prod = new Producto();
+
+        String sql_query = "SELECT * FROM comanda_desayunos.carta WHERE disponibilidad=1;";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                carta.put(rs.getInt("id"), rs.getFloat("precio"));
-
+                prod = infoProducto(rs.getInt("id"));
+                carta.put(rs.getInt("id"), prod);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -417,18 +400,26 @@ public class Main {
      *     <li>Disponibilidad</li>
      * </ul>
      */
-    static String infoProducto(String column, Integer id_producto) {
-        String vuelta = "";
-        String sql_query = "SELECT carta." + column + " FROM comanda_desayunos.carta WHERE id=" + id_producto + ";";
+    static Producto infoProducto(Integer id_producto) {
+        Producto prod = new Producto();
+
+        String sql_query = "SELECT * FROM comanda_desayunos.carta WHERE id=?;";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
+            pst.setInt(1, id_producto);
             ResultSet rest = pst.executeQuery();
+
             while (rest.next()) {
-                vuelta = rest.getString(column);
+                prod.setId(id_producto);
+                prod.setNombre(rest.getString("nombre"));
+                prod.setTipo(rest.getString("tipo"));
+                prod.setPrecio(rest.getFloat("precio"));
+                prod.setDisponible(rest.getBoolean("disponibilidad"));
+
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return vuelta;
+        return prod;
     }
 
 
@@ -558,9 +549,8 @@ public class Main {
         } else {
             System.out.println("<<                                                        >>");
         }
-        clean(1);
         System.out.println("Indique que desea hacer:");
-        clean(2);
+        clean(1);
         System.out.println("0. Salir del programa");
         System.out.println("1. Consultar Datos");
         System.out.println("2. Modificar Datos");
@@ -587,14 +577,13 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.println("Menu de Consulta");
         System.out.println("<<           >>");
-        clean(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Listar comandas pendientes de un dia");
         System.out.println("2. Mostrar todas las comandas pendientes");
         System.out.println("3. Mostrar todas las comandas, pendientes y recogidas, dado un tramo");
         System.out.println("4. Mostrar Carta");
         System.out.println("5. Mostrar los pedidos de un Alumno");
-        System.out.println();
+        clean(1);
         return sc.nextInt();
 
     }
@@ -615,13 +604,12 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.println("Menu de Modificacion");
         System.out.println("<<                >>");
-        clean(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Eliminar Pedido");
         System.out.println("2. Marcar pedido como Recogido");
         System.out.println("3. Modificar Pedido");
         System.out.println("4. Modificar Producto de la carta");
-        System.out.println();
+        clean(1);
         return sc.nextInt();
     }
 
@@ -641,12 +629,11 @@ public class Main {
 
         System.out.println("Menu de Ingreso");
         System.out.println("<<           >>");
-        clean(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Hacer Pedido");
         System.out.println("2. Insertar Nuevo Producto");
         System.out.println("3. Rellenar Stock de un Producto existente");
-        System.out.println();
+        clean(1);
         return sc.nextInt();
     }
 
@@ -713,17 +700,4 @@ public class Main {
 
     }
 
-    static Object leer() {
-        Scanner sc = new Scanner(System.in);
-        return sc.nextLine();
-    }
-
-    static boolean hayLectura() {
-        Scanner sc = new Scanner(System.in);
-        if (sc.hasNextInt()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
