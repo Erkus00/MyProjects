@@ -5,11 +5,21 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Pedido {
+
+    private Integer id;
     private Date fecha;
     private String cliente;
     private String estado;
 
     private HashMap<Producto, Integer> productos;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Date getFecha() {
         return fecha;
@@ -35,11 +45,11 @@ public class Pedido {
         this.estado = estado;
     }
 
-    public HashMap<Producto, Integer> getProducto() {
+    public HashMap<Producto, Integer> getProductos() {
         return productos;
     }
 
-    public void setProducto(HashMap<Producto, Integer> producto) {
+    public void setProductos(HashMap<Producto, Integer> producto) {
         this.productos = producto;
     }
 

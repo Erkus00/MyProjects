@@ -233,20 +233,22 @@ public class Main {
         System.out.println("Pulse 1 para imprimir el recibo. Pulse 0 para salir al menu de ingreso");
         Integer lect = leerInt();
         if (lect == 1) {
+            boolean insertado;
             Date now = new Date();
             java.sql.Date sqlDate = new java.sql.Date(now.getTime());
             pedido.setCliente(nombre);
-            pedido.setProducto(comanda);
+            pedido.setProductos(comanda);
             pedido.setEstado("pendiente");
             pedido.setFecha(sqlDate);
             clean(2);
             System.out.println("**********************************");
             pedido.recibo();
             System.out.println("**********************************");
-            if (insertarPedido(pedido)) {
+            insertado = insertarPedido(pedido);
+            if (insertado) {
                 System.out.println("Pedido realizado correctamente");
             } else {
-                System.out.println("Prblema al realizar el pedido. Intentelo de Nuevo por favor y disculpe las molestias");
+                System.out.println("Problema al realizar el pedido. Intentelo de Nuevo por favor y disculpe las molestias");
             }
             clean(1);
         }
@@ -266,25 +268,35 @@ public class Main {
      * </ul>
      */
     static boolean insertarPedido(Pedido pedido) {
-        boolean finalizado = false;
 
+        boolean finalizado = false;
         String sql_query = "INSERT INTO pedido (fecha,cliente,estado,producto) VALUES (?,?,?,?);";
-        try (PreparedStatement pst = con.prepareStatement(sql_query, Statement.RETURN_GENERATED_KEYS);) {
-            pst.setDate(1, pedido.getFecha());
-            pst.setString(2, pedido.getCliente());
-            pst.setString(3, pedido.getEstado());
-            pst.setInt(4, pedido.isDisponible());
-            pst.executeUpdate();
-            ResultSet generatedKeys = pst.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                Integer id = generatedKeys.getInt(1);
-                producto.setId(id);
+        LinkedList<Integer> id_productos = new LinkedList<>();
+        pedido.getProductos().forEach((k, v) -> {
+            id_productos.add(k.getId());
+        });
+
+        for (int i = 0; i < id_productos.size(); i++) {
+
+            try (PreparedStatement pst = con.prepareStatement(sql_query, Statement.RETURN_GENERATED_KEYS);) {
+                pst.setDate(1, pedido.getFecha());
+                pst.setString(2, pedido.getCliente());
+                pst.setString(3, pedido.getEstado());
+                pst.setInt(4, id_productos.get(i));
+
+                pst.executeUpdate();
+                ResultSet generatedKeys = pst.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    Integer id = generatedKeys.getInt(1);
+                    pedido.setId(id);
+                }
+                finalizado = true;
+            } catch (Exception e) {
+                System.out.println(e);
+                finalizado = false;
             }
-            finalizado = true;
-        } catch (Exception e) {
-            System.out.println(e);
-            finalizado = false;
         }
+
         return finalizado;
     }
 
@@ -373,7 +385,7 @@ public class Main {
      */
     static HashMap<Integer, Producto> carta() {
         HashMap<Integer, Producto> carta = new HashMap<>();
-        Producto prod = new Producto();
+        Producto prod;
 
         String sql_query = "SELECT * FROM comanda_desayunos.carta WHERE disponibilidad=1;";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
@@ -422,9 +434,8 @@ public class Main {
         return prod;
     }
 
-
     /**
-     * Obtiene la disponibilidad de un producto de la carta
+     * Obtiene la disponibilidad de un producto del restaurante
      *
      * @param id_producto Identificador del producto del que se desea obtener la disponibilidad
      * @return <ul>
