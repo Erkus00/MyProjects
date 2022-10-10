@@ -14,7 +14,7 @@ public class Main {
     protected static final Connection con = Conexion.getCon();
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
 
         boolean salir = false;
@@ -159,7 +159,7 @@ public class Main {
         }
     }
 
-    static void gestionPedido() {
+    static void gestionPedido() throws Exception {
 
         // Lista que guardará como Key: el producto y como segundo valor el numero de elementos que se desea
         LinkedHashMap<Producto, Integer> comanda = new LinkedHashMap<>();
@@ -211,8 +211,11 @@ public class Main {
             }
 
             clean(1);
+
             comanda.forEach((k, v) -> {
-                System.out.println(k.getNombre() + " -> Cantidad: " + v);
+                if (v > 0) {
+                    System.out.println(k.getNombre() + " -> Cantidad: " + v);
+                }
             });
             clean(1);
 
@@ -227,7 +230,9 @@ public class Main {
         System.out.println("Nombre de pedido: " + nombre);
         comanda.forEach((k, v) ->
         {
-            System.out.println(k.getNombre() + " (" + k.getPrecio() + "€)" + " -> Cantidad: " + v);
+            if (v > 0) {
+                System.out.println(k.getNombre() + " (" + k.getPrecio() + "€)" + " -> Cantidad: " + v);
+            }
         });
         clean(1);
         System.out.println("Pulse 1 para imprimir el recibo. Pulse 0 para salir al menu de ingreso");
@@ -236,7 +241,15 @@ public class Main {
             boolean insertado;
             Date now = new Date();
             java.sql.Date sqlDate = new java.sql.Date(now.getTime());
+            Integer max;
+            if (!gestorIdentificacion().isEmpty()) {
+                max = Collections.max(gestorIdentificacion());
+            } else {
+                max = 0;
+            }
+
             pedido.setCliente(nombre);
+            pedido.setIdentificacion(max + 1);
             pedido.setProductos(comanda);
             pedido.setEstado("pendiente");
             pedido.setFecha(sqlDate);
@@ -244,6 +257,7 @@ public class Main {
             System.out.println("**********************************");
             pedido.recibo();
             System.out.println("**********************************");
+
             insertado = insertarPedido(pedido);
             if (insertado) {
                 System.out.println("Pedido realizado correctamente");
@@ -252,7 +266,42 @@ public class Main {
             }
             clean(1);
         }
+    }
 
+    static ArrayList<Integer> gestorIdentificacion() throws Exception {
+        ArrayList<Integer> todas_identificaciones = new ArrayList<>();
+        String sql_query = "SELECT pedido.identificador FROM comanda_desayunos.pedido;";
+        try (PreparedStatement pst = con.prepareStatement(sql_query)) {
+            ResultSet rest = pst.executeQuery();
+            while (rest.next()) {
+                todas_identificaciones.add(rest.getInt("identificador"));
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+
+        }
+
+        return todas_identificaciones;
+    }
+
+    static void gestorEliminacion() {
+        boolean salir = false;
+        while (!salir) {
+            System.out.println("Que desea eliminar");
+            System.out.println("0. Salir");
+            System.out.println("1. Producto");
+            System.out.println("2. Pedido");
+            Integer eleccion = leerInt();
+
+            switch (eleccion) {
+                case 0 -> salir = true;
+                case 1:
+                    System.out.println("Lista de pedidos actuales");
+                    System.out.println("Indique el producto que desea eliminar");
+
+                    break;
+            }
+        }
     }
 
     // Funciones CRUD (Create, Read, Delete and Update
@@ -270,10 +319,12 @@ public class Main {
     static boolean insertarPedido(Pedido pedido) {
 
         boolean finalizado = false;
-        String sql_query = "INSERT INTO pedido (fecha,cliente,estado,producto) VALUES (?,?,?,?);";
+        String sql_query = "INSERT INTO pedido (fecha,cliente,estado,producto,identificador) VALUES (?,?,?,?,?);";
         LinkedList<Integer> id_productos = new LinkedList<>();
         pedido.getProductos().forEach((k, v) -> {
-            id_productos.add(k.getId());
+            if (v > 0) {
+                id_productos.add(k.getId());
+            }
         });
 
         for (int i = 0; i < id_productos.size(); i++) {
@@ -283,6 +334,7 @@ public class Main {
                 pst.setString(2, pedido.getCliente());
                 pst.setString(3, pedido.getEstado());
                 pst.setInt(4, id_productos.get(i));
+                pst.setInt(5, pedido.getIdentificacion());
 
                 pst.executeUpdate();
                 ResultSet generatedKeys = pst.getGeneratedKeys();
@@ -292,8 +344,8 @@ public class Main {
                 }
                 finalizado = true;
             } catch (Exception e) {
-                System.out.println(e);
                 finalizado = false;
+                throw new RuntimeException(e);
             }
         }
 
@@ -309,7 +361,7 @@ public class Main {
      * </ul>
      */
     static boolean insertarProducto(Producto producto) {
-        boolean finalizado = false;
+        boolean finalizado;
 
         String sql_query = "INSERT INTO carta (nombre,tipo,precio,disponibilidad) VALUES (?,?,?,?);";
         try (PreparedStatement pst = con.prepareStatement(sql_query, Statement.RETURN_GENERATED_KEYS);) {
@@ -325,8 +377,8 @@ public class Main {
             }
             finalizado = true;
         } catch (Exception e) {
-            System.out.println(e);
             finalizado = false;
+            throw new RuntimeException(e);
         }
         return finalizado;
     }
@@ -341,8 +393,16 @@ public class Main {
      * <li><i>False</i>: Si ha habido un error a la hora de eliminar el pedido</li>
      * </ul>
      */
-    static boolean eliminarPedido() {
+    static boolean eliminarPedido(Integer id_pedido) {
         boolean finalizado = false;
+        String sql_query = "DELETE FROM pedido WHERE id=?";
+        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
+            pst.setInt(1, id_pedido);
+            finalizado = true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         return finalizado;
     }
 
@@ -380,7 +440,7 @@ public class Main {
      * @return Hashmap con:
      * <ul>
      *     <li><b>Key: </b>Nombre del Producto</li>
-     *     <li><b>Value: </b>Valor del Producto</li>
+     *     <li><b>Value: </b>Producto</li>
      * </ul>
      */
     static HashMap<Integer, Producto> carta() {
@@ -426,7 +486,6 @@ public class Main {
                 prod.setTipo(rest.getString("tipo"));
                 prod.setPrecio(rest.getFloat("precio"));
                 prod.setDisponible(rest.getBoolean("disponibilidad"));
-
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -450,8 +509,8 @@ public class Main {
     /**
      * Muestra toda la informacion de una comanda sin importar su estado
      *
-     * @param id_pedido Identificador del pedido
-     * @return Muestra toda la informacion de un pedido:
+     * @param identificador Identificador del pedido
+     * @return Devuelve un Pedido:
      * <ul>
      *     <li>Fecha</li>
      *     <li>Cliente</li>
@@ -460,9 +519,25 @@ public class Main {
      *     <li>Precio total del pedido</li>
      * </ul>
      */
-//    static String infoPedido(Integer id_pedido) {
-//
-//    }
+    static Pedido infoPedido(Integer identificador) {
+        String sql_query = "SELECT * FROM pedido WHERE identificador=?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql_query);) {
+            ps.setInt(1, identificador);
+            ResultSet rst = ps.executeQuery();
+            while (rst.next()) {
+                Pedido pedido = new Pedido();
+                pedido.setId(rst.getInt("id"));
+                pedido.setIdentificacion(rst.getInt("identificador"));
+                pedido.setFecha(rst.getDate("fecha"));
+                pedido.setCliente(rst.getString("cliente"));
+                pedido.setEstado(rst.getString("estado"));
+                pedido
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Muestra todas las comandas hechas desde el principio:
@@ -470,7 +545,7 @@ public class Main {
      * @return Hashmap con:
      * <ul>
      *     <li><b>Key: </b> Id del Pedido</li>
-     *     <li><b>Value: </b><ul>
+     *     <li><b>Value: Pedido</b><ul>
      *     <li>Fecha</li>
      *     <li>Cliente</li>
      *     <li>Estado</li>
@@ -480,9 +555,10 @@ public class Main {
      * </ul>
      */
 
-//    static HashMap<Integer, String> listarPedidos() {
-//
-//    }
+    static HashMap<Integer, Pedido> listarPedidos() {
+        HashMap<Integer, Pedido> listado_pedidos = new HashMap<>();
+
+    }
 
     /**
      * Muestra todas las comandas de una fecha en concreto

@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Pedido {
 
     private Integer id;
+    private Integer identificacion;
     private Date fecha;
     private String cliente;
     private String estado;
@@ -19,6 +20,14 @@ public class Pedido {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getIdentificacion() {
+        return identificacion;
+    }
+
+    public void setIdentificacion(Integer identificacion) {
+        this.identificacion = identificacion;
     }
 
     public Date getFecha() {
@@ -71,9 +80,11 @@ public class Pedido {
         System.out.println();
         System.out.println("Productos: ");
         productos.forEach((k, v) -> {
-            System.out.println(k.cartaView() + " -- Uds: " + v);
-            float precio = k.getPrecio() * v;
-            precio_total.updateAndGet(v1 -> (v1 + precio));
+            if (v > 0) {
+                System.out.println(k.cartaView() + " -- Uds: " + v);
+                float precio = k.getPrecio() * v;
+                precio_total.updateAndGet(v1 -> (v1 + precio));
+            }
         });
         System.out.println();
         System.out.println("Precio Final a Pagar: " + precio_total + "€");
