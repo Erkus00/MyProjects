@@ -4,6 +4,7 @@ import Controller.Conexion;
 import Model.Pedido;
 import Model.Producto;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
@@ -176,7 +177,7 @@ public class Main {
 
         while (!salir.equals("exit")) {
             System.out.println("--------------------------------");
-            carta().forEach((k, v) -> {
+            carta().forEach((v) -> {
                 System.out.println(v.cartaView());
             });
             System.out.println("--------------------------------");
@@ -241,9 +242,12 @@ public class Main {
             boolean insertado;
             Date now = new Date();
             java.sql.Date sqlDate = new java.sql.Date(now.getTime());
+            ArrayList<Integer> identificaciones = new ArrayList<>();
+            identificaciones = gestorIdentificacion();
             Integer max;
-            if (!gestorIdentificacion().isEmpty()) {
-                max = Collections.max(gestorIdentificacion());
+
+            if (!identificaciones.isEmpty()) {
+                max = Collections.max(identificaciones);
             } else {
                 max = 0;
             }
@@ -287,6 +291,10 @@ public class Main {
     static void gestorEliminacion() {
         boolean salir = false;
         while (!salir) {
+            HashMap<Integer, Pedido> lista_pedidos = new HashMap<>();
+            ArrayList<Producto> lista_productos = listarProductos();
+
+
             System.out.println("Que desea eliminar");
             System.out.println("0. Salir");
             System.out.println("1. Producto");
@@ -294,11 +302,20 @@ public class Main {
             Integer eleccion = leerInt();
 
             switch (eleccion) {
-                case 0 -> salir = true;
+                case 0:
+                    salir = true;
+                    break;
                 case 1:
                     System.out.println("Lista de pedidos actuales");
-                    System.out.println("Indique el producto que desea eliminar");
-
+                    System.out.println("Indique el numero de pedido que desea eliminar");
+                    break;
+                case 2:
+                    System.out.println("Lista de productos actuales");
+                    System.out.println(lista_productos);
+                    System.out.println("Indique el numero del producto que desea eliminar");
+                    break;
+                default:
+                    System.out.println("Opcion no disponible");
                     break;
             }
         }
@@ -393,11 +410,24 @@ public class Main {
      * <li><i>False</i>: Si ha habido un error a la hora de eliminar el pedido</li>
      * </ul>
      */
-    static boolean eliminarPedido(Integer id_pedido) {
+    static boolean eliminarPedido(Integer identificador) {
         boolean finalizado = false;
-        String sql_query = "DELETE FROM pedido WHERE id=?";
+        String sql_query = "DELETE FROM pedido WHERE identificador=?";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
-            pst.setInt(1, id_pedido);
+            pst.setInt(1, identificador);
+            finalizado = true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return finalizado;
+    }
+
+    static boolean eliminarProducto(Integer id) {
+        boolean finalizado = false;
+        String sql_query = "DELETE FROM carta WHERE id=?";
+        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
+            pst.setInt(1, id);
             finalizado = true;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -430,9 +460,25 @@ public class Main {
      *
      * @return Listado de la informacion detallada de todos los productos
      */
-//    static ArrayList<String> listarProductos() {
-//
-//    }
+    static ArrayList<Producto> listarProductos() {
+
+        ArrayList<Producto> productos = new ArrayList<>();
+        Producto prod;
+
+        String sql_query = "SELECT * FROM comanda_desayunos.carta";
+
+        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                prod = infoProducto(rs.getInt("id"));
+                productos.add(prod);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return productos;
+    }
+
 
     /**
      * Lista aquellos productos que están disponibles y su precio
@@ -443,8 +489,8 @@ public class Main {
      *     <li><b>Value: </b>Producto</li>
      * </ul>
      */
-    static HashMap<Integer, Producto> carta() {
-        HashMap<Integer, Producto> carta = new HashMap<>();
+    static ArrayList<Producto> carta() {
+        ArrayList<Producto> carta = ArrayList;
         Producto prod;
 
         String sql_query = "SELECT * FROM comanda_desayunos.carta WHERE disponibilidad=1;";
@@ -452,7 +498,7 @@ public class Main {
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 prod = infoProducto(rs.getInt("id"));
-                carta.put(rs.getInt("id"), prod);
+                carta.add(prod);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -520,6 +566,7 @@ public class Main {
      * </ul>
      */
     static Pedido infoPedido(Integer identificador) {
+        HashMap<Pedido, Integer> productos = new HashMap<>();
         String sql_query = "SELECT * FROM pedido WHERE identificador=?";
 
         try (PreparedStatement ps = con.prepareStatement(sql_query);) {
