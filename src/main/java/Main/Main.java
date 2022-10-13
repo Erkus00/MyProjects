@@ -57,7 +57,7 @@ public class Main {
                         cleanDot(3);
                         switch (elector) {
                             case 0 -> salir_sub = true;
-                            case 1 -> System.out.println("Eliminar Pedido");
+                            case 1 -> gestorEliminacion();
                             case 2 -> System.out.println("Marcar pedido como recogido");
                             case 3 -> System.out.println("Modificar Pedido");
                             case 4 -> System.out.println("Modificar Producto");
@@ -292,32 +292,11 @@ public class Main {
         boolean salir = false;
         while (!salir) {
             HashMap<Integer, Pedido> lista_pedidos = new HashMap<>();
-            ArrayList<Producto> lista_productos = listarProductos();
 
-
-            System.out.println("Que desea eliminar");
-            System.out.println("0. Salir");
-            System.out.println("1. Producto");
-            System.out.println("2. Pedido");
-            Integer eleccion = leerInt();
-
-            switch (eleccion) {
-                case 0:
-                    salir = true;
-                    break;
-                case 1:
-                    System.out.println("Lista de pedidos actuales");
-                    System.out.println("Indique el numero de pedido que desea eliminar");
-                    break;
-                case 2:
-                    System.out.println("Lista de productos actuales");
-                    System.out.println(lista_productos);
-                    System.out.println("Indique el numero del producto que desea eliminar");
-                    break;
-                default:
-                    System.out.println("Opcion no disponible");
-                    break;
-            }
+            System.out.println("Que pedido desea eliminar");
+            lista_pedidos.forEach((k, v) -> {
+                System.out.println(v.infoView());
+            });
         }
     }
 
@@ -423,18 +402,19 @@ public class Main {
         return finalizado;
     }
 
-    static boolean eliminarProducto(Integer id) {
-        boolean finalizado = false;
-        String sql_query = "DELETE FROM carta WHERE id=?";
-        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
-            pst.setInt(1, id);
-            finalizado = true;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return finalizado;
-    }
+//    static boolean eliminarProducto(Integer id) {
+//        boolean finalizado = false;
+//        String sql_query = "DELETE FROM carta WHERE id=?";
+//        try (PreparedStatement pst = con.prepareStatement(sql_query);) {
+//            pst.setInt(1, id);
+//            pst.executeUpdate();
+//            finalizado = true;
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        return finalizado;
+//    }
 
     // Funciones de Actualizar Datos (Update)
 
@@ -453,7 +433,6 @@ public class Main {
 
 
     // Funciones de Leer/Coger de Datos (Read)
-
 
     /**
      * Genera una lista con todos los productos esten o no disponibles
@@ -479,7 +458,6 @@ public class Main {
         return productos;
     }
 
-
     /**
      * Lista aquellos productos que están disponibles y su precio
      *
@@ -490,7 +468,7 @@ public class Main {
      * </ul>
      */
     static ArrayList<Producto> carta() {
-        ArrayList<Producto> carta = ArrayList;
+        ArrayList<Producto> carta = new ArrayList<>();
         Producto prod;
 
         String sql_query = "SELECT * FROM comanda_desayunos.carta WHERE disponibilidad=1;";
@@ -549,7 +527,6 @@ public class Main {
      * </ul>
      */
 //    static Boolean obtenerDisponibilidadProducto(Integer id_producto) {
-//
 //    }
 
     /**
@@ -574,16 +551,18 @@ public class Main {
             ResultSet rst = ps.executeQuery();
             while (rst.next()) {
                 Pedido pedido = new Pedido();
+
                 pedido.setId(rst.getInt("id"));
                 pedido.setIdentificacion(rst.getInt("identificador"));
                 pedido.setFecha(rst.getDate("fecha"));
                 pedido.setCliente(rst.getString("cliente"));
                 pedido.setEstado(rst.getString("estado"));
-                pedido
+//                pedido
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
     /**
@@ -602,10 +581,10 @@ public class Main {
      * </ul>
      */
 
-    static HashMap<Integer, Pedido> listarPedidos() {
-        HashMap<Integer, Pedido> listado_pedidos = new HashMap<>();
-
-    }
+//    static HashMap<Integer, Pedido> listarPedidos() {
+//        HashMap<Integer, Pedido> listado_pedidos = new HashMap<>();
+//
+//    }
 
     /**
      * Muestra todas las comandas de una fecha en concreto
@@ -739,7 +718,7 @@ public class Main {
         System.out.println("Menu de Modificacion");
         System.out.println("<<                >>");
         System.out.println("0. Salir al menu principal");
-        System.out.println("1. Eliminar Pedido");
+        System.out.println("1. Eliminar Pedido / Producto");
         System.out.println("2. Marcar pedido como Recogido");
         System.out.println("3. Modificar Pedido");
         System.out.println("4. Modificar Producto de la carta");

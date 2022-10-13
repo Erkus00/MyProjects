@@ -72,6 +72,10 @@ public class Pedido {
                 '}';
     }
 
+    public String infoView() {
+        return identificacion + " || " + cliente + " || " + fecha + " || " + productos;
+    }
+
     public void recibo() {
         AtomicReference<Float> precio_total = new AtomicReference<>((float) 0);
 
