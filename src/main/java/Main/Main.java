@@ -14,9 +14,7 @@ public class Main {
     protected static Boolean primera_vez = true;
     protected static final Connection con = Conexion.getCon();
 
-
     public static void main(String[] args) throws Exception {
-
 
         boolean salir = false;
 
@@ -229,8 +227,7 @@ public class Main {
         System.out.println("Verifique que los datos a insertar son correctos: ");
         clean(1);
         System.out.println("Nombre de pedido: " + nombre);
-        comanda.forEach((k, v) ->
-        {
+        comanda.forEach((k, v) -> {
             if (v > 0) {
                 System.out.println(k.getNombre() + " (" + k.getPrecio() + "€)" + " -> Cantidad: " + v);
             }
@@ -294,9 +291,13 @@ public class Main {
             ArrayList<Pedido> lista_pedidos = listarPedidos();
 
             System.out.println("--- Que pedido desea eliminar");
-            lista_pedidos.forEach((v) -> {
-                System.out.println(v.infoView());
-            });
+            if (!lista_pedidos.isEmpty()) {
+                lista_pedidos.forEach((v) -> {
+                    System.out.println(v.infoView());
+                });
+            } else {
+                System.out.println("No hay Pedidos");
+            }
             System.out.println("----------------------------------------------------------------------");
             System.out.println("Indiqueme el numero de identificacion que desea eliminar");
             Integer eleccion = leerInt();
@@ -309,9 +310,13 @@ public class Main {
             if (aceptar == 1) {
                 eliminarPedido(eleccion);
                 lista_pedidos = listarPedidos();
-                lista_pedidos.forEach((v) -> {
-                    System.out.println(v.infoView());
-                });
+                if (!lista_pedidos.isEmpty()) {
+                    lista_pedidos.forEach((v) -> {
+                        System.out.println(v.infoView());
+                    });
+                } else {
+                    System.out.println("No hay Pedidos");
+                }
 
                 System.out.println("¿Desea continuar eliminando pedidos?");
                 System.out.println("0. No");
@@ -418,6 +423,7 @@ public class Main {
         String sql_query = "DELETE FROM pedido WHERE identificador=?";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
             pst.setInt(1, identificador);
+            pst.execute();
             finalizado = true;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -609,14 +615,16 @@ public class Main {
 
     static ArrayList<Pedido> listarPedidos() {
         ArrayList<Pedido> listado_pedidos = new ArrayList<>();
-        String sql_query = "SELECT MAX(identificador) AS maximo FROM pedido";
+        String sql_query = "SELECT MIN(identificador) AS minimo, MAX(identificador) AS maximo FROM pedido";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             ResultSet rst = pst.executeQuery();
             Integer max_id = null;
+            Integer min_id = null;
             while (rst.next()) {
+                min_id = rst.getInt("minimo");
                 max_id = rst.getInt("maximo");
 
-                for (Integer i = 1; i <= max_id; i++) {
+                for (Integer i = min_id; i <= max_id; i++) {
                     Pedido pedido_temp = infoPedido(i);
                     listado_pedidos.add(pedido_temp);
                 }
