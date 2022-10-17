@@ -87,7 +87,7 @@ public class Producto {
     }
 
     public String cartaView() {
-        return id + "|| " + nombre + " --> " + precio + " €";
+        return id + " || " + nombre + " --> " + precio + " €";
     }
 
 

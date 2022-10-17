@@ -57,7 +57,7 @@ public class Main {
                         cleanDot(3);
                         switch (elector) {
                             case 0 -> salir_sub = true;
-                            case 1 -> gestorEliminacion();
+                            case 1 -> gestorEliminacionPedido();
                             case 2 -> System.out.println("Marcar pedido como recogido");
                             case 3 -> System.out.println("Modificar Pedido");
                             case 4 -> System.out.println("Modificar Producto");
@@ -288,15 +288,39 @@ public class Main {
         return todas_identificaciones;
     }
 
-    static void gestorEliminacion() {
+    static void gestorEliminacionPedido() {
         boolean salir = false;
         while (!salir) {
-            HashMap<Integer, Pedido> lista_pedidos = new HashMap<>();
+            ArrayList<Pedido> lista_pedidos = listarPedidos();
 
-            System.out.println("Que pedido desea eliminar");
-            lista_pedidos.forEach((k, v) -> {
+            System.out.println("--- Que pedido desea eliminar");
+            lista_pedidos.forEach((v) -> {
                 System.out.println(v.infoView());
             });
+            System.out.println("----------------------------------------------------------------------");
+            System.out.println("Indiqueme el numero de identificacion que desea eliminar");
+            Integer eleccion = leerInt();
+            System.out.println("¿Desea eliminar el siguiente pedido?");
+            System.out.println(infoPedido(eleccion).infoView());
+            System.out.println("0. No");
+            System.out.println("1. Si");
+            Integer aceptar = leerInt();
+
+            if (aceptar == 1) {
+                eliminarPedido(eleccion);
+                lista_pedidos = listarPedidos();
+                lista_pedidos.forEach((v) -> {
+                    System.out.println(v.infoView());
+                });
+
+                System.out.println("¿Desea continuar eliminando pedidos?");
+                System.out.println("0. No");
+                System.out.println("1. Si");
+                aceptar = leerInt();
+                if (aceptar == 0) {
+                    salir = true;
+                }
+            }
         }
     }
 
@@ -543,26 +567,28 @@ public class Main {
      * </ul>
      */
     static Pedido infoPedido(Integer identificador) {
-        HashMap<Pedido, Integer> productos = new HashMap<>();
+        HashMap<Producto, Integer> productos = new HashMap<>();
+        Pedido pedido = new Pedido();
         String sql_query = "SELECT * FROM pedido WHERE identificador=?";
 
         try (PreparedStatement ps = con.prepareStatement(sql_query);) {
             ps.setInt(1, identificador);
             ResultSet rst = ps.executeQuery();
             while (rst.next()) {
-                Pedido pedido = new Pedido();
+
 
                 pedido.setId(rst.getInt("id"));
                 pedido.setIdentificacion(rst.getInt("identificador"));
                 pedido.setFecha(rst.getDate("fecha"));
                 pedido.setCliente(rst.getString("cliente"));
                 pedido.setEstado(rst.getString("estado"));
-//                pedido
+                productos.put(infoProducto(rst.getInt("producto")), 0);
+                pedido.setProductos(productos);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return pedido;
     }
 
     /**
@@ -581,10 +607,29 @@ public class Main {
      * </ul>
      */
 
-//    static HashMap<Integer, Pedido> listarPedidos() {
-//        HashMap<Integer, Pedido> listado_pedidos = new HashMap<>();
-//
-//    }
+    static ArrayList<Pedido> listarPedidos() {
+        ArrayList<Pedido> listado_pedidos = new ArrayList<>();
+        String sql_query = "SELECT MAX(identificador) AS maximo FROM pedido";
+        try (PreparedStatement pst = con.prepareStatement(sql_query)) {
+            ResultSet rst = pst.executeQuery();
+            Integer max_id = null;
+            while (rst.next()) {
+                max_id = rst.getInt("maximo");
+
+                for (Integer i = 1; i <= max_id; i++) {
+                    Pedido pedido_temp = infoPedido(i);
+                    listado_pedidos.add(pedido_temp);
+                }
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return listado_pedidos;
+
+    }
 
     /**
      * Muestra todas las comandas de una fecha en concreto

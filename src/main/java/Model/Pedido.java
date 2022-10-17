@@ -73,7 +73,13 @@ public class Pedido {
     }
 
     public String infoView() {
-        return identificacion + " || " + cliente + " || " + fecha + " || " + productos;
+        System.out.println("----------------------------------------------------------------------");
+        productos.forEach((k, v) -> {
+            System.out.println(k.cartaView());
+        });
+
+        String tense = "\n || Identificacion Pedido: "+identificacion + "\n || Cliente: " + cliente + "\n || Fecha: " + fecha;
+        return tense;
     }
 
     public void recibo() {
