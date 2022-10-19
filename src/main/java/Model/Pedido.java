@@ -10,6 +10,8 @@ public class Pedido {
     private Integer identificacion;
     private Date fecha;
     private String cliente;
+
+    // Estados Posibles: pendiente y Recogido
     private String estado;
 
     private HashMap<Producto, Integer> productos;
