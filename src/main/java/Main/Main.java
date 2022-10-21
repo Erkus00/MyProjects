@@ -29,9 +29,11 @@ public class Main {
                         switch (elector) {
                             case 0 -> salir_sub = true;
                             case 1 -> System.out.println("Listar Comandas pendientes de un dia");
-                            case 2 -> System.out.println("Mostrar todas las Comandas Pendientes");
+                            case 2 -> pedidosPendientes();
                             case 3 -> System.out.println("Mostrar comandas Pendientes y recogidas de un tramo");
-                            case 4 -> System.out.println("Ver carta");
+                            case 4 -> carta().forEach(k->{
+                                System.out.println(k.cartaView());
+                            });
                             case 5 -> System.out.println("Ver pedidos de un Alumno");
                             default -> {
                                 clean(5);

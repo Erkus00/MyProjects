@@ -1,8 +1,8 @@
 package Controller;
 
+import Model.Fecha;
 import Model.Pedido;
 import Model.Producto;
-import com.mysql.cj.protocol.x.CompressionAlgorithm;
 
 import java.sql.*;
 import java.util.*;
@@ -290,17 +290,7 @@ public class PedidoDAO {
     public static void marcarPedidoRecogido() {
         boolean salir = false;
         while (!salir) {
-            ArrayList<Pedido> all_pedidos = listarAllPedidos();
-            ArrayList<Pedido> pedidos_pendientes = new ArrayList<>();
-            all_pedidos.forEach(k -> {
-                if (k.getEstado().equals("pendiente")) {
-                    pedidos_pendientes.add(k);
-                }
-            });
-            System.out.println("Lista de los pedidos actuales que se encuentran pendientes");
-            pedidos_pendientes.forEach(k -> {
-                System.out.println(k.infoView());
-            });
+            pedidosPendientes();
             System.out.println("Indique el Id del pedido que desea marcar como recogido");
             Integer identificador_pedido = leerInt();
             System.out.println("¿Desea marcar como recogido este pedido?");
@@ -354,27 +344,44 @@ public class PedidoDAO {
      */
     static ArrayList<Pedido> listarAllPedidos() {
         ArrayList<Pedido> listado_pedidos = new ArrayList<>();
-        String sql_query = "SELECT MIN(identificador) AS minimo, MAX(identificador) AS maximo FROM pedido";
+        ArrayList<Integer> info_identificador = new ArrayList<>();
+        String sql_query = "SELECT DISTINCT identificador FROM pedido";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             ResultSet rst = pst.executeQuery();
-            Integer max_id = null;
-            Integer min_id = null;
             while (rst.next()) {
-                min_id = rst.getInt("minimo");
-                max_id = rst.getInt("maximo");
-
-                for (Integer i = min_id; i <= max_id; i++) {
-                    Pedido pedido_temp = infoPedido(i);
-                    listado_pedidos.add(pedido_temp);
-                }
+                info_identificador.add(rst.getInt("identificador"));
             }
+            info_identificador.forEach(k -> {
+                Pedido pedido_temp = infoPedido(k);
+                listado_pedidos.add(pedido_temp);
+            });
 
-
-        } catch (SQLException e) {
+        } catch (
+                SQLException e) {
             throw new RuntimeException(e);
         }
 
         return listado_pedidos;
+    }
+
+
+
+    static void gestorFechas(Integer selector) {
+
+        Fecha fecha_inicio = ControllerFecha.leerFecha();
+
+        switch (selector) {
+            case 0:
+                // Listar Pedidos de [f1,f2]
+                break;
+            case 1:
+                //Pedidos pendientes de Fecha
+                break;
+            case 2:
+                //Pedidos de un dia concreto
+                break;
+
+        }
     }
 
     /**
@@ -382,40 +389,57 @@ public class PedidoDAO {
      *
      * @param fechaInicio Fecha desde la cual se desean obtener las comandas
      * @param fechaFin    Fecha final de la que de desea hacer la consulta
-     * @return Hashmap con:
-     * <ul>
-     *     <li><b>Key: </b> Id del Pedido</li>
-     *     <li><b>Value: </b><ul>
-     *     <li>Cliente</li>
-     *     <li>Estado</li>
-     *     <li>Productos comprados</li>
-     *     <li>Precio total del pedido</li>
-     * </ul></li>
-     * </ul>
+     * @return ArrayList de los pedidos comprendidos desde la fecha de inicio hasta la fecha de fin; ambas inclusive
      */
-    static HashMap<Integer, String> listarPedidos(Date fechaInicio, Date fechaFin) {
+    static ArrayList<Pedido> listarPedidosFecha(Date fechaInicio, Date fechaFin) {
+        ArrayList<Pedido> lista_pedidos = new ArrayList<>();
+        String sql_query = "SELECT * FROM pedido where fecha>=? AND fecha<=?;";
+        try (PreparedStatement pst = con.prepareStatement(sql_query)) {
+            java.sql.Date sql_date_inicio = (java.sql.Date) fechaInicio;
+            java.sql.Date sql_date_fin = (java.sql.Date) fechaFin;
+            pst.setDate(1, sql_date_inicio);
+            pst.setDate(2, sql_date_fin);
+            ResultSet rst = pst.executeQuery();
+            while (rst.next()) {
+                Pedido pedido = new Pedido();
+                Integer id = (rst.getInt("id"));
+                pedido = infoPedido(id);
+                lista_pedidos.add(pedido);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return lista_pedidos;
 
     }
+
     /**
      * Lista los pedidos asociados a un alumno siempre que estos hayan sido entregados
      *
      * @param nombre_alumno Nombre del alumno del que se desean obtener los pedidos
-     * @return Hashmap con:
-     * <ul>
-     *     <li><b>Key: </b> Id del Pedido</li>
-     *     <li><b>Value: </b>Fecha en la que se realizó la comanda</li>
-     * </ul>
+     * @return ArrayList de los pedidos asociados a un alumno
      */
 //    static HashMap<Integer, Date> pedidosAlumno(String nombre_alumno) {
-//    }
-    /**
-     * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente
-     *
-     * @return Listado de la id de todos aquellos pedidos que se encuentran pendientes
-     */
-//    static ArrayList<Integer> pedidosPendientes() {
 //
 //    }
+
+    /**
+     * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente
+     */
+
+    public static void pedidosPendientes() {
+        ArrayList<Pedido> all_pedidos = listarAllPedidos();
+        ArrayList<Pedido> pedidos_pendientes = new ArrayList<>();
+        all_pedidos.forEach(k -> {
+            if (k.getEstado().equals("pendiente")) {
+                pedidos_pendientes.add(k);
+            }
+        });
+        System.out.println("Lista de los pedidos actuales que se encuentran pendientes");
+        pedidos_pendientes.forEach(k -> {
+            System.out.println(k.infoView());
+        });
+    }
 
     /**
      * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente de una fecha en concreto
@@ -428,7 +452,6 @@ public class PedidoDAO {
         return null;
     }
 
-    //Funciones de gestion
     static ArrayList<Integer> obtenerAllIdentificacion() throws Exception {
         ArrayList<Integer> todas_identificaciones = new ArrayList<>();
         String sql_query = "SELECT pedido.identificador FROM comanda_desayunos.pedido;";

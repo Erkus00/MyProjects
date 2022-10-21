@@ -175,7 +175,7 @@ public class ProductoDAO {
      *     <li><b>Value: </b>Producto</li>
      * </ul>
      */
-    static ArrayList<Producto> carta() {
+    public static ArrayList<Producto> carta() {
         ArrayList<Producto> carta = new ArrayList<>();
         Producto prod;
 
