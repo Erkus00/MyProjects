@@ -93,18 +93,10 @@ public class Fecha {
         String fecha_string = "";
         String dia_string = "";
         String mes_string = "";
-        if (dia > 0 && dia <= 9) {
-            dia_string = "0" + dia + "-";
-        } else {
-            dia_string = dia + "-";
-        }
-
-        if (mes > 0 && mes <= 9) {
-            mes_string = "0" + mes + "-";
-        } else {
-            mes_string = mes + "-";
-        }
-        fecha_string = dia_string + mes_string + year + "";
+        dia_string = "-" + dia;
+        mes_string = "-" + mes;
+        fecha_string = year + mes_string + dia_string;
+        System.out.println(fecha_string);
         return fecha_string;
     }
 

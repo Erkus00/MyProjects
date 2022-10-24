@@ -28,13 +28,13 @@ public class Main {
                         cleanDot(3);
                         switch (elector) {
                             case 0 -> salir_sub = true;
-                            case 1 -> System.out.println("Listar Comandas pendientes de un dia");
+                            case 1 -> gestorFechas(1);
                             case 2 -> pedidosPendientes();
-                            case 3 -> System.out.println("Mostrar comandas Pendientes y recogidas de un tramo");
+                            case 3 -> gestorFechas(0);
                             case 4 -> carta().forEach(k->{
                                 System.out.println(k.cartaView());
                             });
-                            case 5 -> System.out.println("Ver pedidos de un Alumno");
+                            case 5 -> gestorConsultaAlumno();
                             default -> {
                                 clean(5);
                                 System.out.println("Opcion no disponible");

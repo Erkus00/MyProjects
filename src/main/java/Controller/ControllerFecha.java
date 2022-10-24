@@ -1,12 +1,20 @@
 package Controller;
+
 import Model.Fecha;
+
 import java.util.ArrayList;
+
 import static View.View.*;
 
 public class ControllerFecha {
     public static Fecha leerFecha() {
         ArrayList<String> meses = new ArrayList<>();
-        System.out.println("A continuacion puede ver los meses del año y los dias que tienen");
+        System.out.println("Indiqueme el dia que desea consultar");
+        cleanDot(2);
+        System.out.println("Tenga en cuenta que si ingresa de manera incorrecta los parámetros. Ej: '30-02'");
+        Integer dia = leerInt();
+        clean(2);
+        System.out.println("A continuacion puede ver los meses del año");
         meses.add("Enero");
         meses.add("Febrero");
         meses.add("Marzo");
@@ -26,9 +34,6 @@ public class ControllerFecha {
             cont[0]++;
         });
         cleanDot(2);
-        System.out.println("Indiqueme el dia que desea consultar");
-        System.out.println("Tenga en cuenta que si ingresa de manera incorrecta los parámetros. Ej: '30-02'");
-        Integer dia = leerInt();
         System.out.println("Indique el mes");
         Integer mes_int = leerInt();
         String mes = meses.get(mes_int - 1);

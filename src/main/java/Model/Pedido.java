@@ -11,7 +11,7 @@ public class Pedido {
     private Date fecha;
     private String cliente;
 
-    // Estados Posibles: pendiente y Recogido
+    // Estados Posibles: Pendiente y Recogido
     private String estado;
 
     private HashMap<Producto, Integer> productos;
@@ -53,7 +53,7 @@ public class Pedido {
     }
 
     public void setEstado(String estado) {
-        this.estado = estado;
+        this.estado = estado.toUpperCase();
     }
 
     public HashMap<Producto, Integer> getProductos() {
@@ -80,7 +80,7 @@ public class Pedido {
             System.out.println(k.cartaView());
         });
 
-        String tense = "\n || Identificacion Pedido: "+identificacion + "\n || Cliente: " + cliente + "\n || Fecha: " + fecha;
+        String tense = "\n || Identificacion Pedido: " + identificacion + "\n || Cliente: " + cliente + "\n || Fecha: " + fecha;
         return tense;
     }
 

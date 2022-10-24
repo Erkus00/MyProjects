@@ -112,7 +112,7 @@ public class PedidoDAO {
         Pedido pedido = new Pedido();
 
         System.out.println("Indique un nombre de pedido");
-        String nombre = leerString();
+        String nombre = leerString().toUpperCase();
 
         clean(1);
         Integer id_producto;
@@ -197,7 +197,7 @@ public class PedidoDAO {
             pedido.setCliente(nombre);
             pedido.setIdentificacion(max + 1);
             pedido.setProductos(comanda);
-            pedido.setEstado("pendiente");
+            pedido.setEstado("PENDIENTE");
             pedido.setFecha(sqlDate);
             clean(2);
             System.out.println("**********************************");
@@ -309,7 +309,7 @@ public class PedidoDAO {
             }
             System.out.println("¿Desea continuar marcando pedidos recogidos?");
             System.out.println("0. No");
-            System.out.println("1.Si");
+            System.out.println("1. Si");
             eleccion = leerInt();
             if (eleccion == 0) {
                 salir = true;
@@ -318,7 +318,7 @@ public class PedidoDAO {
     }
 
     static void recogerPedido(Integer identificador_pedido) {
-        String sql_query = "UPDATE pedido SET estado='recogido' WHERE identificador=?;";
+        String sql_query = "UPDATE pedido SET estado='RECOGIDO' WHERE identificador=?;";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             pst.setInt(1, identificador_pedido);
             pst.execute();
@@ -365,22 +365,30 @@ public class PedidoDAO {
     }
 
 
+    public static void gestorFechas(Integer selector) {
 
-    static void gestorFechas(Integer selector) {
-
-        Fecha fecha_inicio = ControllerFecha.leerFecha();
 
         switch (selector) {
             case 0:
-                // Listar Pedidos de [f1,f2]
+                //Pedidos de un intervalo de fechas [f1,f2]
+                System.out.println("Indique la fecha de inicio de consulta");
+                Fecha fecha_inicio = ControllerFecha.leerFecha();
+                Date f1 = fecha_inicio.getSql_date();
+                System.out.println("Indique la fecha de fin de consulta");
+                Fecha fecha_fin = ControllerFecha.leerFecha();
+                Date f2 = fecha_fin.getSql_date();
+                listarPedidosFecha(f1, f2).forEach(k -> {
+                    System.out.println(k.infoView());
+                });
                 break;
             case 1:
                 //Pedidos pendientes de Fecha
-                break;
-            case 2:
-                //Pedidos de un dia concreto
-                break;
+                System.out.println("Indique la fecha de consulta");
+                Fecha fecha = ControllerFecha.leerFecha();
+                Date f = fecha.getSql_date();
 
+                pedidosPendientesFecha(f);
+                break;
         }
     }
 
@@ -393,7 +401,7 @@ public class PedidoDAO {
      */
     static ArrayList<Pedido> listarPedidosFecha(Date fechaInicio, Date fechaFin) {
         ArrayList<Pedido> lista_pedidos = new ArrayList<>();
-        String sql_query = "SELECT * FROM pedido where fecha>=? AND fecha<=?;";
+        String sql_query = "SELECT * FROM pedido WHERE fecha>=? AND fecha<=?;";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             java.sql.Date sql_date_inicio = (java.sql.Date) fechaInicio;
             java.sql.Date sql_date_fin = (java.sql.Date) fechaFin;
@@ -402,7 +410,7 @@ public class PedidoDAO {
             ResultSet rst = pst.executeQuery();
             while (rst.next()) {
                 Pedido pedido = new Pedido();
-                Integer id = (rst.getInt("id"));
+                Integer id = (rst.getInt("identificador"));
                 pedido = infoPedido(id);
                 lista_pedidos.add(pedido);
             }
@@ -413,15 +421,58 @@ public class PedidoDAO {
 
     }
 
+    public static void gestorConsultaAlumno() {
+        clean(3);
+        System.out.println("Listado de los Alumnos: ");
+        clean(1);
+        listarAlumnos();
+        System.out.println("Indique el nombre del alumno");
+        String alumno = leerString().toUpperCase();
+        pedidosAlumno(alumno).forEach(k -> {
+            System.out.println(k.infoView());
+        });
+    }
+
     /**
      * Lista los pedidos asociados a un alumno siempre que estos hayan sido entregados
      *
      * @param nombre_alumno Nombre del alumno del que se desean obtener los pedidos
      * @return ArrayList de los pedidos asociados a un alumno
      */
-//    static HashMap<Integer, Date> pedidosAlumno(String nombre_alumno) {
-//
-//    }
+    static ArrayList<Pedido> pedidosAlumno(String nombre_alumno) {
+        ArrayList<Pedido> pedidos_alumno = new ArrayList<>();
+        String sql_query = "SELECT * FROM pedido WHERE cliente=?";
+        try (PreparedStatement pst = con.prepareStatement(sql_query)) {
+            pst.setString(1, nombre_alumno);
+            ResultSet rst = pst.executeQuery();
+            while (rst.next()) {
+                Integer id = rst.getInt("identificador");
+                Pedido pedido = new Pedido();
+                pedido = infoPedido(id);
+                pedidos_alumno.add(pedido);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return pedidos_alumno;
+    }
+
+    private static void listarAlumnos() {
+        ArrayList<String> alumnos = new ArrayList<>();
+        String sql_query = "SELECT DISTINCT cliente FROM pedido";
+        try (PreparedStatement pst = con.prepareStatement(sql_query)) {
+            ResultSet rst = pst.executeQuery();
+            while (rst.next()) {
+                String alumno = rst.getString("cliente");
+                alumnos.add(alumno);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        alumnos.forEach(System.out::println);
+    }
+
 
     /**
      * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente
@@ -431,7 +482,7 @@ public class PedidoDAO {
         ArrayList<Pedido> all_pedidos = listarAllPedidos();
         ArrayList<Pedido> pedidos_pendientes = new ArrayList<>();
         all_pedidos.forEach(k -> {
-            if (k.getEstado().equals("pendiente")) {
+            if (k.getEstado().equals("PENDIENTE")) {
                 pedidos_pendientes.add(k);
             }
         });
@@ -447,9 +498,26 @@ public class PedidoDAO {
      * @param fecha Fecha de la que se desea obtener el listado
      * @return Listado de la id de todos aquellos pedidos que se encuentran pendientes.
      */
-    static ArrayList<Integer> pedidosPendientesFecha(Date fecha) {
+    static void pedidosPendientesFecha(Date fecha) {
+        ArrayList<Pedido> pedidos_pendientes = new ArrayList<>();
+        String sql_query = "SELECT * FROM pedido WHERE estado='PENDIENTE' AND fecha=?";
+        try (PreparedStatement pst = con.prepareStatement(sql_query)) {
+            pst.setDate(1, (java.sql.Date) fecha);
+            ResultSet rst = pst.executeQuery();
+            while (rst.next()) {
+                Pedido pedido_temp = new Pedido();
+                Integer id = rst.getInt("identificador");
+                pedido_temp = infoPedido(id);
+                pedidos_pendientes.add(pedido_temp);
+            }
 
-        return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Listado de Pedidos Pendientes del " + fecha.toString());
+        pedidos_pendientes.forEach(k -> {
+            System.out.println(k.infoView());
+        });
     }
 
     static ArrayList<Integer> obtenerAllIdentificacion() throws Exception {
