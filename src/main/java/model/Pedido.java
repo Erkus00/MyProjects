@@ -1,28 +1,31 @@
-package Model;
+package model;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static view.View.cleanDot;
+
+/**
+ * Objeto que guarda la comanda de un usuario del programa.
+ */
 public class Pedido {
 
-    private Integer id;
+    // Valor de Identificacion de un Pedido. Sirve para guardar la informacion dentro de la base de datos en una misma tabla
     private Integer identificacion;
-    private Date fecha;
+
+    // Fecha en la que se realizó la comanda
+    private java.sql.Date fecha;
+
+    // Nombre asociado al pedido
     private String cliente;
 
-    // Estados Posibles: Pendiente y Recogido
+    // Estados Posibles: PENDIENTE y RECOGIDO
     private String estado;
 
+    //Listado de los Productos elegidos
     private HashMap<Producto, Integer> productos;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getIdentificacion() {
         return identificacion;
@@ -64,7 +67,6 @@ public class Pedido {
         this.productos = producto;
     }
 
-
     @Override
     public String toString() {
         return "fecha -> " + fecha +
@@ -74,19 +76,27 @@ public class Pedido {
                 '}';
     }
 
+    /**
+     * Vista mas sencilla de interpretar por el usuario
+     *
+     * @return String con la Identificacion, el nombre del pedido y la fecha
+     */
     public String infoView() {
         System.out.println("----------------------------------------------------------------------");
         productos.forEach((k, v) -> {
             System.out.println(k.cartaView());
         });
 
-        String tense = "\n || Identificacion Pedido: " + identificacion + "\n || Cliente: " + cliente + "\n || Fecha: " + fecha;
-        return tense;
+        return "\n || Identificacion Pedido: " + identificacion + "\n || Cliente: " + cliente + "\n || Fecha: " + fecha;
     }
 
+    /**
+     * Vista que simula un recibo emitido tras la efectuacion del pedido. Tambien calcula el precio total del pedido a partir de la cantidad deseada
+     */
     public void recibo() {
         AtomicReference<Float> precio_total = new AtomicReference<>((float) 0);
-
+        cleanDot(3);
+        System.out.println("**********************************");
         System.out.println("Nombre: " + cliente);
         System.out.println("Fecha: " + fecha);
         System.out.println();
@@ -100,7 +110,7 @@ public class Pedido {
         });
         System.out.println();
         System.out.println("Precio Final a Pagar: " + precio_total + "€");
-
-
+        System.out.println("**********************************");
+        cleanDot(3);
     }
 }

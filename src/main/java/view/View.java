@@ -1,13 +1,13 @@
-package View;
+package view;
 
 import java.util.Scanner;
 
+/**
+ * Clase que muestra la interfaz grafica al usuario para el uso del Programa
+ */
 public class View {
 
     protected static Boolean primera_vez = true;
-
-
-    // Funciones Auxiliares
 
     /**
      * Muestra el menu inicial de acciones del programa por consola. En este podrá elegir si desea:
@@ -18,18 +18,20 @@ public class View {
      *     <li>3. Ingresar Datos</li>
      * </ul>
      *
-     * @return La opcion seleccionada
+     * @return Opcion seleccionada
      */
     public static Integer menuInicio() {
         Scanner sc = new Scanner(System.in);
-        cleanDot(4);
+        clean(2);
         if (primera_vez) {
             System.out.println("<<                                                        >>");
             System.out.println("BIENVENIDO AL PROGRAMA DE GESTION DE LOS DESAYUNOS DEL CESUR");
             primera_vez = false;
             System.out.println("<<                                                        >>");
+            clean(2);
         } else {
             System.out.println("<<                                                        >>");
+            clean(2);
         }
         System.out.println("Indique que desea hacer:");
         clean(1);
@@ -46,19 +48,20 @@ public class View {
      * Muestra el menu de las opciones de consulta a la base de datos. Estas serian:
      * <ul>
      *     <li>0. Salir al menu principal</li>
-     *     <li>1. Listar comandas pendientes de un dia (Hoy de manera predeterminada)</li>
+     *     <li>1. Listar comandas pendientes de un dia</li>
      *     <li>2. Mostrar todas las comandas pendientes</li>
      *     <li>3. Mostrar todas las comandas, pendientes y recogidas, dado un tramo</li>
      *     <li>4. Mostrar Carta</li>
      *     <li>5. Ver pedidos de un Alumno</li>
      * </ul>
      *
-     * @return
+     * @return Opcion seleccionada
      */
     public static Integer menuConsulta() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Menu de Consulta");
         System.out.println("<<           >>");
+        cleanDot(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Listar comandas pendientes de un dia");
         System.out.println("2. Mostrar todas las comandas pendientes");
@@ -80,12 +83,13 @@ public class View {
      *     <li>4. Modificar producto de la carta</li>
      * </ul>
      *
-     * @return opcion seleccionada
+     * @return Opcion seleccionada
      */
     public static Integer menuMod() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Menu de Modificacion");
         System.out.println("<<                >>");
+        cleanDot(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Eliminar Pedido / Producto");
         System.out.println("2. Marcar pedido como Recogido");
@@ -102,13 +106,14 @@ public class View {
      *     <li>3. Rellenar Stock de un Producto existente</li>
      * </ul>
      *
-     * @return opcion seleccionada
+     * @return Opcion seleccionada
      */
     public static Integer menuIngreso() {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Menu de Ingreso");
         System.out.println("<<           >>");
+        cleanDot(2);
         System.out.println("0. Salir al menu principal");
         System.out.println("1. Hacer Pedido");
         System.out.println("2. Insertar Nuevo Producto");

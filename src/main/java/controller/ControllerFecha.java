@@ -1,11 +1,14 @@
-package Controller;
-
-import Model.Fecha;
+package controller;
 
 import java.util.ArrayList;
 
-import static View.View.*;
+import static view.View.*;
 
+import model.Fecha;
+
+/**
+ * Clase de apoyo para el manejo de la lectura de fechas por teclado
+ */
 public class ControllerFecha {
     public static Fecha leerFecha() {
         ArrayList<String> meses = new ArrayList<>();

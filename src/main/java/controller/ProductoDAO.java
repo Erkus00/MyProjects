@@ -1,6 +1,6 @@
-package Controller;
+package controller;
 
-import Model.Producto;
+import model.Producto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,23 +8,21 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import static View.View.*;
+import static view.View.*;
 
+/**
+ * Controlador de Producto
+ */
 public class ProductoDAO {
+
+    // Conexion con la Base de Datos
     protected static final Connection con = Conexion.getCon();
 
-
     /**
-     * Muestra toda la informacion de un producto de la carta
+     * Devuelve un producto de la Base de Datos con la 'Id' indicada
      *
-     * @param id_producto Identificador del producto
-     * @return Muestra toda la informacion de un pruducto:
-     * <ul>
-     *     <li>Nombre</li>
-     *     <li>Tipo</li>
-     *     <li>Precio</li>
-     *     <li>Disponibilidad</li>
-     * </ul>
+     * @param id_producto Id unico del producto
+     * @return Objeto Pedido con la informacion guardada en la base de Datos
      */
     static Producto infoProducto(Integer id_producto) {
         Producto prod = new Producto();
@@ -48,15 +46,16 @@ public class ProductoDAO {
     }
 
     /**
-     * Permite crear un nuevo Producto
+     * Permite guardar un producto en la base de Datos
      *
+     * @param producto Objeto de la clase Producto que se desea guardar en la Base de Datos
      * @return <ul>
      * <li><i>True</i>: Si se ha podido Crear</li>
      * <li><i>False</i>: Si ha habido algun error</li>
      * </ul>
      */
     static boolean insertarProducto(Producto producto) {
-        boolean finalizado;
+        boolean finalizado = false;
 
         String sql_query = "INSERT INTO carta (nombre,tipo,precio,disponibilidad) VALUES (?,?,?,?);";
         try (PreparedStatement pst = con.prepareStatement(sql_query, Statement.RETURN_GENERATED_KEYS);) {
@@ -64,21 +63,25 @@ public class ProductoDAO {
             pst.setString(2, producto.getTipo());
             pst.setFloat(3, producto.getPrecio());
             pst.setBoolean(4, producto.isDisponible());
-            pst.executeUpdate();
+            if (pst.execute()) {
+                finalizado = true;
+            }
             ResultSet generatedKeys = pst.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Integer id = generatedKeys.getInt(1);
                 producto.setId(id);
             }
-            finalizado = true;
+
         } catch (Exception e) {
-            finalizado = false;
             throw new RuntimeException(e);
         }
         return finalizado;
     }
 
-
+    /**
+     * Funcion que permite gestionar la insercion de un producto en la Base de Datos
+     * Guia al usuario y crea un producto a partir de los datos introducidos. Posteriormente lo inserta en la base de Datos
+     */
     public static void insercionProducto() {
 
         boolean salir = false;
@@ -90,12 +93,11 @@ public class ProductoDAO {
 
         while (!salir) {
 
-            Producto producto = new Producto();
-
             System.out.println("Indique el nombre del producto");
-            nombre = leerString();
+            nombre = leerString().toUpperCase();
 
             System.out.println("Indique el Tipo");
+            clean(1);
             System.out.println("1. Bebida");
             System.out.println("2. Panaderia");
             System.out.println("3. Bolleria");
@@ -106,15 +108,21 @@ public class ProductoDAO {
             System.out.println("Indique el precio € -- (Formato Ejemplo: 1,5) --");
             precio = leerFloat();
 
-
             System.out.println("Especificaciones del producto");
             System.out.println("Nombre: " + nombre);
-            System.out.println("Tipo: " + Producto.leerTipo(tipo));
+            System.out.println("Tipo: " + leerTipo(tipo));
             System.out.println("Precio: " + precio + "€");
 
-            System.out.println("¿Son correctos estos parámetros? [y/n]");
+            clean(1);
+            System.out.println("¿Son correctos los datos del producto?  [y/n]");
+            cleanDot(1);
+            System.out.println("y -> Sí");
+            System.out.println("n -> No");
             correcto = leerString().toLowerCase();
+            clean(1);
 
+
+            Producto producto = new Producto();
             if (correcto.equals("y")) {
                 producto.setNombre(nombre.toLowerCase());
                 producto.setTipo(tipo);
@@ -125,7 +133,6 @@ public class ProductoDAO {
             clean(3);
             if (insertado) {
                 System.out.println("Producto insertado correctamente");
-                System.out.println(producto);
             } else {
                 System.out.println("Producto no ha sido insertado");
             }
@@ -167,19 +174,15 @@ public class ProductoDAO {
     }
 
     /**
-     * Lista aquellos productos que están disponibles y su precio
+     * Lista aquellos productos que están disponibles
      *
-     * @return Hashmap con:
-     * <ul>
-     *     <li><b>Key: </b>Nombre del Producto</li>
-     *     <li><b>Value: </b>Producto</li>
-     * </ul>
+     * @return Listado de los productos que cumplen la condicion de estar disponibles
      */
     public static ArrayList<Producto> carta() {
         ArrayList<Producto> carta = new ArrayList<>();
         Producto prod;
 
-        String sql_query = "SELECT * FROM comanda_desayunos.carta WHERE disponibilidad=1;";
+        String sql_query = "SELECT id FROM comanda_desayunos.carta WHERE disponibilidad=1;";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
@@ -192,4 +195,23 @@ public class ProductoDAO {
         return carta;
     }
 
+    /**
+     * Funcion para establecer el Tipo de producto
+     *
+     * @param tipo Valor del 1 al 5, lo que facilita la normalizacion dentro de la tabla
+     * @return El tipo que se guardará dentro de la Base de Datos
+     */
+    public static String leerTipo(Integer tipo) {
+        String tense = "";
+        switch (tipo) {
+            case 1 -> tense = "BEBIDA";
+            case 2 -> tense = "PANADERIA";
+            case 3 -> tense = "BOLLERIA";
+            case 4 -> tense = "LACTEO";
+            case 5 -> tense = "OTRO";
+            default -> {
+            }
+        }
+        return tense;
+    }
 }

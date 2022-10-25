@@ -1,35 +1,29 @@
-package Controller;
+package controller;
 
-import Model.Fecha;
-import Model.Pedido;
-import Model.Producto;
+import model.Fecha;
+import model.Pedido;
+import model.Producto;
 
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static Controller.ProductoDAO.*;
-import static View.View.*;
+import static controller.ProductoDAO.*;
+import static view.View.*;
 
-
+/**
+ * Clase de Control de los Pedidos
+ */
 public class PedidoDAO {
+    // Objeto de conexion con la Base de Datos
     protected static final Connection con = Conexion.getCon();
-
 
     /**
      * Muestra toda la informacion de un pedido sin importar su estado
      *
-     * @param identificador Identificador del pedido
-     * @return Devuelve un Pedido:
-     * <ul>
-     *     <li>id</li>
-     *     <li>identificador</li>
-     *     <li>fecha</li>
-     *     <li>cliente</li>
-     *     <li>estado</li>
-     *     <li>listado de productos</li>
-     * </ul>
+     * @param identificador Identificador del pedido. Un mismo pedido comparte identificador
+     * @return Devuelve el Pedido guardado en la Base de Datos con el Identificador Indicado
      */
     static Pedido infoPedido(Integer identificador) {
         HashMap<Producto, Integer> productos = new HashMap<>();
@@ -42,7 +36,6 @@ public class PedidoDAO {
             while (rst.next()) {
 
 
-                pedido.setId(rst.getInt("id"));
                 pedido.setIdentificacion(rst.getInt("identificador"));
                 pedido.setFecha(rst.getDate("fecha"));
                 pedido.setCliente(rst.getString("cliente"));
@@ -67,14 +60,16 @@ public class PedidoDAO {
     static boolean insertarPedido(Pedido pedido) {
 
         boolean finalizado = false;
-        String sql_query = "INSERT INTO pedido (fecha,cliente,estado,producto,identificador) VALUES (?,?,?,?,?);";
+        String sql_query = "INSERT INTO pedido (fecha,cliente,estado,producto,identificador,cantidad) VALUES (?,?,?,?,?,?);";
         LinkedList<Integer> id_productos = new LinkedList<>();
+        LinkedList<Integer> cantidades = new LinkedList<>();
         pedido.getProductos().forEach((k, v) -> {
             if (v > 0) {
                 id_productos.add(k.getId());
+                cantidades.add(v);
             }
         });
-
+        int i = 0;
         for (Integer id_producto : id_productos) {
 
             try (PreparedStatement pst = con.prepareStatement(sql_query, Statement.RETURN_GENERATED_KEYS);) {
@@ -83,18 +78,15 @@ public class PedidoDAO {
                 pst.setString(3, pedido.getEstado());
                 pst.setInt(4, id_producto);
                 pst.setInt(5, pedido.getIdentificacion());
-
+                pst.setInt(6, cantidades.get(i));
                 pst.executeUpdate();
-                ResultSet generatedKeys = pst.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    Integer id = generatedKeys.getInt(1);
-                    pedido.setId(id);
-                }
                 finalizado = true;
             } catch (Exception e) {
-                finalizado = false;
                 throw new RuntimeException(e);
+
             }
+
+            i++;
         }
         return finalizado;
     }
@@ -156,7 +148,10 @@ public class PedidoDAO {
             }
 
             clean(1);
-
+            System.out.println("/////////////////////////////////////////////////////");
+            clean(1);
+            System.out.println("Productos guardados:");
+            cleanDot(1);
             comanda.forEach((k, v) -> {
                 if (v > 0) {
                     System.out.println(k.getNombre() + " -> Cantidad: " + v);
@@ -164,20 +159,24 @@ public class PedidoDAO {
             });
             clean(1);
 
-            System.out.println("Pulse enter para realizar otra comanda. Escriba 'exit' para pasar continuar");
-            System.out.println("En caso de que quiera editar, usar un '-' delante del valor para quitar. Introducir el valor sin signo para sumar a lo ya pedido");
+            System.out.println("Pulse enter para realizar otra comanda. Escriba 'exit' para pasar al proceso de confirmacion");
+            System.out.println("<< Nota: En caso de que quiera editar, usar un '-' delante del valor para quitar. Introducir el valor sin signo, habiendo seleccionado previamente el producto, para sumar a lo ya pedido >>");
             salir = leerString();
         }
 
         cleanDot(4);
         System.out.println("Verifique que los datos a insertar son correctos: ");
         clean(1);
+        System.out.println("/////////////////////////////////////////////////////");
+        cleanDot(1);
         System.out.println("Nombre de pedido: " + nombre);
         comanda.forEach((k, v) -> {
             if (v > 0) {
                 System.out.println(k.getNombre() + " (" + k.getPrecio() + "€)" + " -> Cantidad: " + v);
             }
         });
+        cleanDot(1);
+        System.out.println("/////////////////////////////////////////////////////");
         clean(1);
         System.out.println("Pulse 1 para imprimir el recibo. Pulse 0 para salir al menu de ingreso");
         Integer lect = leerInt();
@@ -200,10 +199,7 @@ public class PedidoDAO {
             pedido.setEstado("PENDIENTE");
             pedido.setFecha(sqlDate);
             clean(2);
-            System.out.println("**********************************");
             pedido.recibo();
-            System.out.println("**********************************");
-
             insertado = insertarPedido(pedido);
             if (insertado) {
                 System.out.println("Pedido realizado correctamente");
@@ -217,17 +213,18 @@ public class PedidoDAO {
     /**
      * Permite eliminar un pedido siempre que este ya se haya realizado
      */
-    static void eliminarPedido(Integer identificador) {
+    static boolean eliminarPedido(Integer identificador) {
         boolean finalizado = false;
         String sql_query = "DELETE FROM pedido WHERE identificador=?";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
             pst.setInt(1, identificador);
-            pst.execute();
-            finalizado = true;
+            if (pst.execute()) {
+                finalizado = true;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
+        return finalizado;
     }
 
     /**
@@ -238,7 +235,7 @@ public class PedidoDAO {
     public static void gestorEliminacionPedido() {
         boolean salir = false;
         while (!salir) {
-            ArrayList<Pedido> lista_pedidos = listarAllPedidos();
+            ArrayList<Pedido> lista_pedidos = listarAllPedidos(false);
 
             System.out.println("--- Que pedido desea eliminar");
             if (!lista_pedidos.isEmpty()) {
@@ -255,17 +252,21 @@ public class PedidoDAO {
             System.out.println(infoPedido(eleccion).infoView());
             System.out.println("0. No");
             System.out.println("1. Si");
-            Integer aceptar = leerInt();
+            int aceptar = leerInt();
 
             if (aceptar == 1) {
-                eliminarPedido(eleccion);
-                lista_pedidos = listarAllPedidos();
-                if (!lista_pedidos.isEmpty()) {
+                boolean eliminado = eliminarPedido(eleccion);
+                lista_pedidos = listarAllPedidos(false);
+                if (!lista_pedidos.isEmpty() && eliminado) {
                     lista_pedidos.forEach((v) -> {
                         System.out.println(v.infoView());
                     });
                 } else {
-                    System.out.println("No hay Pedidos");
+                    if (!eliminado) {
+                        System.out.println("Error de eliminacion");
+                    } else {
+                        System.out.println("No hay Pedidos");
+                    }
                 }
 
                 System.out.println("¿Desea continuar eliminando pedidos?");
@@ -280,12 +281,8 @@ public class PedidoDAO {
     }
 
     /**
-     * Permite marcar un pedido como recogido
-     *
-     * @return <ul>
-     * <li><i>True</i>: Si se ha sido recogido y marcado como tal</li>
-     * <li><i>False</i>: Si se ha producido un error a la hora de recoger el pedido</li>
-     * </ul>
+     * Permite marcar un pedido como recogido y guia al usuario en la eleccion
+     * Una vez finalizada la funcion, interactua con el usuario para volver a ejecutarse en el caso que este lo desee
      */
     public static void marcarPedidoRecogido() {
         boolean salir = false;
@@ -297,12 +294,12 @@ public class PedidoDAO {
             System.out.println(infoPedido(identificador_pedido));
             System.out.println("0. No");
             System.out.println("1.Si");
-            Integer eleccion = leerInt();
+            int eleccion = leerInt();
             if (eleccion == 1) {
                 clean(3);
                 recogerPedido(identificador_pedido);
                 System.out.println("Situacion actual de los pedidos");
-                listarAllPedidos().forEach(k -> {
+                listarAllPedidos(false).forEach(k -> {
                     System.out.println(k.infoView());
                 });
                 cleanDot(3);
@@ -317,6 +314,11 @@ public class PedidoDAO {
         }
     }
 
+    /**
+     * Marca un pedido como recogido y actualiza la BD
+     *
+     * @param identificador_pedido Numero de identificacion del pedido que se desea recoger
+     */
     static void recogerPedido(Integer identificador_pedido) {
         String sql_query = "UPDATE pedido SET estado='RECOGIDO' WHERE identificador=?;";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
@@ -328,24 +330,20 @@ public class PedidoDAO {
     }
 
     /**
-     * Muestra todas las comandas hechas desde el principio:
-     *
-     * @return Hashmap con:
-     * <ul>
-     *     <li><b>Key: </b> Id del Pedido</li>
-     *     <li><b>Value: Pedido</b><ul>
-     *     <li>Fecha</li>
-     *     <li>Cliente</li>
-     *     <li>Estado</li>
-     *     <li>Productos comprados</li>
-     *     <li>Precio total del pedido</li>
-     * </ul></li>
-     * </ul>
+     * Muestra todas las comandas.
+     * Si se desea, puede hacerse consulta de aquellos pedidos que sean exclusivamente pendientes,
+     * en caso contrario, la consulta devolverá todos los pedidos existentes
      */
-    static ArrayList<Pedido> listarAllPedidos() {
+    static ArrayList<Pedido> listarAllPedidos(boolean pendiente) {
         ArrayList<Pedido> listado_pedidos = new ArrayList<>();
         ArrayList<Integer> info_identificador = new ArrayList<>();
-        String sql_query = "SELECT DISTINCT identificador FROM pedido";
+        String sql_query = "";
+        if (!pendiente) {
+            sql_query = "SELECT DISTINCT identificador FROM pedido";
+        } else {
+            sql_query = "SELECT DISTINCT identificador FROM pedido WHERE estado='PENDIENTE'";
+        }
+
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             ResultSet rst = pst.executeQuery();
             while (rst.next()) {
@@ -364,31 +362,33 @@ public class PedidoDAO {
         return listado_pedidos;
     }
 
-
+    /**
+     * Gestiona la entrada por teclado de una fecha.
+     * Dependiendo de la opcion, se introducen 2 fechas (caso 0) o 1 sola (caso 1)
+     *
+     * @param selector Caso que se desea mostrar al usuario
+     */
     public static void gestorFechas(Integer selector) {
-
-
         switch (selector) {
-            case 0:
+            case 0 -> {
                 //Pedidos de un intervalo de fechas [f1,f2]
-                System.out.println("Indique la fecha de inicio de consulta");
+                System.out.println("Siga los pasos para indicar la fecha de inicio de consulta");
                 Fecha fecha_inicio = ControllerFecha.leerFecha();
                 Date f1 = fecha_inicio.getSql_date();
-                System.out.println("Indique la fecha de fin de consulta");
+                System.out.println("Siga los pasos para indicar la fecha de fin de consulta");
                 Fecha fecha_fin = ControllerFecha.leerFecha();
                 Date f2 = fecha_fin.getSql_date();
                 listarPedidosFecha(f1, f2).forEach(k -> {
                     System.out.println(k.infoView());
                 });
-                break;
-            case 1:
+            }
+            case 1 -> {
                 //Pedidos pendientes de Fecha
-                System.out.println("Indique la fecha de consulta");
+                System.out.println("Siga los pasos para indicar la fecha de consulta");
                 Fecha fecha = ControllerFecha.leerFecha();
                 Date f = fecha.getSql_date();
-
                 pedidosPendientesFecha(f);
-                break;
+            }
         }
     }
 
@@ -421,6 +421,9 @@ public class PedidoDAO {
 
     }
 
+    /**
+     * Muestra los diferentes clientes y permite
+     */
     public static void gestorConsultaAlumno() {
         clean(3);
         System.out.println("Listado de los Alumnos: ");
@@ -458,6 +461,9 @@ public class PedidoDAO {
         return pedidos_alumno;
     }
 
+    /**
+     * Lista y muestra los clientes que han efectuado uno o mas pedidos
+     */
     private static void listarAlumnos() {
         ArrayList<String> alumnos = new ArrayList<>();
         String sql_query = "SELECT DISTINCT cliente FROM pedido";
@@ -470,33 +476,33 @@ public class PedidoDAO {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        alumnos.forEach(System.out::println);
+        alumnos.forEach(k -> {
+            System.out.println("-- " + k);
+        });
     }
 
 
     /**
-     * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente
+     * Consulta a la BD los pedidos que se encuentran pendientes
      */
 
     public static void pedidosPendientes() {
-        ArrayList<Pedido> all_pedidos = listarAllPedidos();
-        ArrayList<Pedido> pedidos_pendientes = new ArrayList<>();
-        all_pedidos.forEach(k -> {
-            if (k.getEstado().equals("PENDIENTE")) {
-                pedidos_pendientes.add(k);
-            }
-        });
+        ArrayList<Pedido> pedidos_pendientes = listarAllPedidos(true);
+
         System.out.println("Lista de los pedidos actuales que se encuentran pendientes");
+        clean(2);
         pedidos_pendientes.forEach(k -> {
+            System.out.println("Identificacion del pedido --> " + k.getIdentificacion() + ":>");
             System.out.println(k.infoView());
+            clean(1);
         });
     }
 
     /**
-     * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente de una fecha en concreto
+     * Accede a la id de todos los pedidos que se encuentran en estado: Pendiente de una fecha en concreto.
+     * Posteriormente los muestra
      *
      * @param fecha Fecha de la que se desea obtener el listado
-     * @return Listado de la id de todos aquellos pedidos que se encuentran pendientes.
      */
     static void pedidosPendientesFecha(Date fecha) {
         ArrayList<Pedido> pedidos_pendientes = new ArrayList<>();
@@ -520,9 +526,14 @@ public class PedidoDAO {
         });
     }
 
+    /**
+     * Consulta los distintos Identificadores de todos los pedidos
+     *
+     * @return Listado de las distintas identificaciones
+     */
     static ArrayList<Integer> obtenerAllIdentificacion() throws Exception {
         ArrayList<Integer> todas_identificaciones = new ArrayList<>();
-        String sql_query = "SELECT pedido.identificador FROM comanda_desayunos.pedido;";
+        String sql_query = "SELECT DISTINCT identificador FROM comanda_desayunos.pedido;";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             ResultSet rest = pst.executeQuery();
             while (rest.next()) {
@@ -530,9 +541,7 @@ public class PedidoDAO {
             }
         } catch (Exception e) {
             throw new Exception(e);
-
         }
-
         return todas_identificaciones;
     }
 }

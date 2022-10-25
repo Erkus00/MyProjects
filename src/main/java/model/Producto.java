@@ -1,11 +1,25 @@
-package Model;
+package model;
 
+import static controller.ProductoDAO.leerTipo;
+
+/**
+ * Objeto que guarda las opciones dentro de la carta. Así, el usuario puede seleccionarla y pedirla para su disfrute
+ */
 public class Producto {
 
+    // Identificador del producto. Generado y Gestionado por SGBD
     private Integer id;
+
+    // Nombre descriptivo del Producto
     private String nombre;
+
+    // Tipo de Producto (Clasificacion)
     private String tipo;
+
+    // Precio en € del producto
     private float precio;
+
+    // Indica la disponibilidad del producto. TRUE: Disponible; FALSE: No Disponible
     private boolean disponible;
 
     public Integer getId() {
@@ -36,30 +50,6 @@ public class Producto {
         this.tipo = tipo;
     }
 
-    public static String leerTipo(Integer tipo) {
-        String tense = "";
-        switch (tipo) {
-            case 1:
-                tense = "bebida";
-                break;
-            case 2:
-                tense = "panaderia";
-                break;
-            case 3:
-                tense = "bolleria";
-                break;
-            case 4:
-                tense = "lacteo";
-                break;
-            case 5:
-                tense = "otro";
-                break;
-            default:
-                break;
-        }
-        return tense;
-    }
-
     public float getPrecio() {
         return precio;
     }
@@ -86,6 +76,11 @@ public class Producto {
                 ", disponible -> " + disponible;
     }
 
+    /**
+     * Formato User-Friendly para poder mostrar un producto al usuario
+     *
+     * @return La id del producto, el nombre y el precio guardados
+     */
     public String cartaView() {
         return id + " || " + nombre + " --> " + precio + " €";
     }
