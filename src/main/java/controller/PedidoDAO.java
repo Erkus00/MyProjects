@@ -374,11 +374,9 @@ public class PedidoDAO {
                 //Pedidos de un intervalo de fechas [f1,f2]
                 System.out.println("Siga los pasos para indicar la fecha de inicio de consulta");
                 Fecha fecha_inicio = ControllerFecha.leerFecha();
-                Date f1 = fecha_inicio.getSql_date();
                 System.out.println("Siga los pasos para indicar la fecha de fin de consulta");
                 Fecha fecha_fin = ControllerFecha.leerFecha();
-                Date f2 = fecha_fin.getSql_date();
-                listarPedidosFecha(f1, f2).forEach(k -> {
+                listarPedidosFecha(fecha_inicio.getSql_date(), fecha_fin.getSql_date()).forEach(k -> {
                     System.out.println(k.infoView());
                 });
             }
@@ -386,8 +384,7 @@ public class PedidoDAO {
                 //Pedidos pendientes de Fecha
                 System.out.println("Siga los pasos para indicar la fecha de consulta");
                 Fecha fecha = ControllerFecha.leerFecha();
-                Date f = fecha.getSql_date();
-                pedidosPendientesFecha(f);
+                pedidosPendientesFecha(fecha.getSql_date());
             }
         }
     }
@@ -399,14 +396,12 @@ public class PedidoDAO {
      * @param fechaFin    Fecha final de la que de desea hacer la consulta
      * @return ArrayList de los pedidos comprendidos desde la fecha de inicio hasta la fecha de fin; ambas inclusive
      */
-    static ArrayList<Pedido> listarPedidosFecha(Date fechaInicio, Date fechaFin) {
+    static ArrayList<Pedido> listarPedidosFecha(java.sql.Date fechaInicio, java.sql.Date fechaFin) {
         ArrayList<Pedido> lista_pedidos = new ArrayList<>();
         String sql_query = "SELECT * FROM pedido WHERE fecha>=? AND fecha<=?;";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
-            java.sql.Date sql_date_inicio = (java.sql.Date) fechaInicio;
-            java.sql.Date sql_date_fin = (java.sql.Date) fechaFin;
-            pst.setDate(1, sql_date_inicio);
-            pst.setDate(2, sql_date_fin);
+            pst.setDate(1, fechaInicio);
+            pst.setDate(2, fechaFin);
             ResultSet rst = pst.executeQuery();
             while (rst.next()) {
                 Pedido pedido = new Pedido();
@@ -504,11 +499,11 @@ public class PedidoDAO {
      *
      * @param fecha Fecha de la que se desea obtener el listado
      */
-    static void pedidosPendientesFecha(Date fecha) {
+    static void pedidosPendientesFecha(java.sql.Date fecha) {
         ArrayList<Pedido> pedidos_pendientes = new ArrayList<>();
         String sql_query = "SELECT * FROM pedido WHERE estado='PENDIENTE' AND fecha=?";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
-            pst.setDate(1, (java.sql.Date) fecha);
+            pst.setDate(1, fecha);
             ResultSet rst = pst.executeQuery();
             while (rst.next()) {
                 Pedido pedido_temp = new Pedido();
