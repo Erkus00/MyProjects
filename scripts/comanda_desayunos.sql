@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `pedido` (
   `producto` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `producto` (`producto`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Restricciones para tablas volcadas
