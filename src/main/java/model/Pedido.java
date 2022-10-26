@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static view.View.clean;
 import static view.View.cleanDot;
 
 /**
@@ -82,12 +83,15 @@ public class Pedido {
      * @return String con la Identificacion, el nombre del pedido y la fecha
      */
     public String infoView() {
+        clean(1);
+        System.out.println(">>-------------------------->>");
+        System.out.println("Identificacion del pedido --> " + identificacion + " :>");
         System.out.println("----------------------------------------------------------------------");
         productos.forEach((k, v) -> {
-            System.out.println(k.cartaView());
+            System.out.println(k.cartaView() + " º | º Cantidad: " + v);
         });
 
-        return "\n || Identificacion Pedido: " + identificacion + "\n || Cliente: " + cliente + "\n || Fecha: " + fecha;
+        return "\n Cliente: " + cliente + "\n || Fecha: " + fecha + "\n"+"----------------------------------------------------------------------";
     }
 
     /**

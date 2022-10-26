@@ -91,7 +91,7 @@ public class View {
         System.out.println("<<                >>");
         cleanDot(2);
         System.out.println("0. Salir al menu principal");
-        System.out.println("1. Eliminar Pedido / Producto");
+        System.out.println("1. Eliminar Pedido");
         System.out.println("2. Marcar pedido como Recogido");
         clean(1);
         return sc.nextInt();

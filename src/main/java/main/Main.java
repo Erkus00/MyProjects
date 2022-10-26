@@ -1,5 +1,3 @@
-
-
 package main;
 
 import static controller.PedidoDAO.*;
@@ -18,7 +16,6 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         boolean salir = false;
-
         while (!salir) {
             // Se muestra el menu visual al Usuario y se recoge su eleccion
             Integer opcion = menuInicio();
@@ -60,11 +57,12 @@ public class Main {
      * Gestiona la eleccion del usuario en el menu de Consulta
      *
      * @return <ul>
-     *     <li>TRUE: Si se desea salir del subMenu</li>
-     *     <li>FALSE: Si se desea continuar en el subMenu</li>
+     * <li>TRUE: Si se desea salir del subMenu</li>
+     * <li>FALSE: Si se desea continuar en el subMenu</li>
      * </ul>
      */
     static boolean inicio() {
+        clean(2);
         Integer elector = menuConsulta();
         cleanDot(3);
         boolean salir_sub = false;
@@ -78,9 +76,13 @@ public class Main {
             case 2 -> pedidosPendientes();
             // Listar las comandas pendientes y
             case 3 -> gestorFechas(0);
-            case 4 -> carta().forEach(k -> {
-                System.out.println(k.cartaView());
-            });
+            case 4 -> {
+                System.out.println("--------------------------------");
+                carta().forEach(k -> {
+                    System.out.println(k.cartaView());
+                });
+                System.out.println("--------------------------------");
+            }
             case 5 -> gestorConsultaAlumno();
             default -> {
                 clean(5);
@@ -95,8 +97,8 @@ public class Main {
      * Gestiona la eleccion del usuario en el menu de Modificacion
      *
      * @return <ul>
-     *     <li>TRUE: Si se desea salir del subMenu</li>
-     *     <li>FALSE: Si se desea continuar en el subMenu</li>
+     * <li>TRUE: Si se desea salir del subMenu</li>
+     * <li>FALSE: Si se desea continuar en el subMenu</li>
      * </ul>
      */
     static boolean modificacion() {
@@ -121,8 +123,8 @@ public class Main {
      * Gestiona la eleccion del usuario en el menu de Infreso
      *
      * @return <ul>
-     *     <li>TRUE: Si se desea salir del subMenu</li>
-     *     <li>FALSE: Si se desea continuar en el subMenu</li>
+     * <li>TRUE: Si se desea salir del subMenu</li>
+     * <li>FALSE: Si se desea continuar en el subMenu</li>
      * </ul>
      */
     static boolean ingreso() throws Exception {
@@ -142,5 +144,4 @@ public class Main {
         }
         return salir_sub;
     }
-
 }

@@ -63,9 +63,13 @@ public class ProductoDAO {
             pst.setString(2, producto.getTipo());
             pst.setFloat(3, producto.getPrecio());
             pst.setBoolean(4, producto.isDisponible());
-            if (pst.execute()) {
+            int i= pst.executeUpdate();
+            if (i > 0) {
                 finalizado = true;
+            } else {
+                System.out.println("Algo ha fallado al insertar el Producto");
             }
+
             ResultSet generatedKeys = pst.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Integer id = generatedKeys.getInt(1);
@@ -124,7 +128,7 @@ public class ProductoDAO {
 
             Producto producto = new Producto();
             if (correcto.equals("y")) {
-                producto.setNombre(nombre.toLowerCase());
+                producto.setNombre(nombre.toUpperCase());
                 producto.setTipo(tipo);
                 producto.setPrecio(precio);
                 producto.setDisponible(true);

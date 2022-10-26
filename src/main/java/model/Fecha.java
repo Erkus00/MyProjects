@@ -17,73 +17,73 @@ public class Fecha {
     public Fecha(Integer dia, String mes) {
         switch (mes) {
             case "Enero" -> {
-                if (dia > 0 && dia < 31) {
+                if (dia > 0 && dia <= 31) {
                     this.dia = dia;
                 }
                 this.mes = 1;
             }
             case "Febrero" -> {
-                if (dia > 0 && dia < 28) {
+                if (dia > 0 && dia <= 28) {
                     this.dia = dia;
                 }
                 this.mes = 2;
             }
             case "Marzo" -> {
-                if (dia > 0 && dia < 31) {
+                if (dia > 0 && dia <= 31) {
                     this.dia = dia;
                 }
                 this.mes = 3;
             }
             case "Abril" -> {
-                if (dia > 0 && dia < 30) {
+                if (dia > 0 && dia <= 30) {
                     this.dia = dia;
                 }
                 this.mes = 4;
             }
             case "Mayo" -> {
-                if (dia > 0 && dia < 31) {
+                if (dia > 0 && dia <= 31) {
                     this.dia = dia;
                 }
                 this.mes = 5;
             }
             case "Junio" -> {
-                if (dia > 0 && dia < 30) {
+                if (dia > 0 && dia <= 30) {
                     this.dia = dia;
                 }
                 this.mes = 6;
             }
             case "Julio" -> {
-                if (dia > 0 && dia < 31) {
+                if (dia > 0 && dia <= 31) {
                     this.dia = dia;
                 }
                 this.mes = 7;
             }
             case "Agosto" -> {
-                if (dia > 0 && dia < 31) {
+                if (dia > 0 && dia <= 31) {
                     this.dia = dia;
                 }
                 this.mes = 8;
             }
             case "Septiembre" -> {
-                if (dia > 0 && dia < 30) {
+                if (dia > 0 && dia <= 30) {
                     this.dia = dia;
                 }
                 this.mes = 9;
             }
             case "Octubre" -> {
-                if (dia > 0 && dia < 31) {
+                if (dia > 0 && dia <= 31) {
                     this.dia = dia;
                 }
                 this.mes = 10;
             }
             case "Noviembre" -> {
-                if (dia > 0 && dia < 30) {
+                if (dia > 0 && dia <= 30) {
                     this.dia = dia;
                 }
                 this.mes = 11;
             }
             case "Diciembre" -> {
-                if (dia > 0 && dia < 31) {
+                if (dia > 0 && dia <= 31) {
                     this.dia = dia;
                 }
                 this.mes = 12;

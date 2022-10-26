@@ -40,7 +40,7 @@ public class PedidoDAO {
                 pedido.setFecha(rst.getDate("fecha"));
                 pedido.setCliente(rst.getString("cliente"));
                 pedido.setEstado(rst.getString("estado"));
-                productos.put(infoProducto(rst.getInt("producto")), 0);
+                productos.put(infoProducto(rst.getInt("producto")), rst.getInt("cantidad"));
                 pedido.setProductos(productos);
             }
         } catch (Exception e) {
@@ -79,8 +79,12 @@ public class PedidoDAO {
                 pst.setInt(4, id_producto);
                 pst.setInt(5, pedido.getIdentificacion());
                 pst.setInt(6, cantidades.get(i));
-                pst.executeUpdate();
-                finalizado = true;
+                int j = pst.executeUpdate();
+                if (j > 0) {
+                    finalizado = true;
+                } else {
+                    System.out.println("Algo ha fallado al insertar el Producto");
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
 
@@ -218,8 +222,11 @@ public class PedidoDAO {
         String sql_query = "DELETE FROM pedido WHERE identificador=?";
         try (PreparedStatement pst = con.prepareStatement(sql_query);) {
             pst.setInt(1, identificador);
-            if (pst.execute()) {
+            int i = pst.executeUpdate();
+            if (i > 0) {
                 finalizado = true;
+            } else {
+                System.out.println("Algo ha fallado al insertar el Producto");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -236,7 +243,7 @@ public class PedidoDAO {
         boolean salir = false;
         while (!salir) {
             ArrayList<Pedido> lista_pedidos = listarAllPedidos(false);
-
+            clean(2);
             System.out.println("--- Que pedido desea eliminar");
             if (!lista_pedidos.isEmpty()) {
                 lista_pedidos.forEach((v) -> {
@@ -248,13 +255,13 @@ public class PedidoDAO {
             System.out.println("----------------------------------------------------------------------");
             System.out.println("Indiqueme el numero de identificacion que desea eliminar");
             Integer eleccion = leerInt();
-            System.out.println("¿Desea eliminar el siguiente pedido de manera permanente?");
+            System.out.println("¿Desea eliminar el siguiente pedido de manera permanente? [y/n]");
             System.out.println(infoPedido(eleccion).infoView());
-            System.out.println("0. No");
-            System.out.println("1. Si");
-            int aceptar = leerInt();
+            System.out.println("y -> Si");
+            System.out.println("n -> No");
+            String aceptar = leerString().toLowerCase();
 
-            if (aceptar == 1) {
+            if (aceptar.equals("y")) {
                 boolean eliminado = eliminarPedido(eleccion);
                 lista_pedidos = listarAllPedidos(false);
                 if (!lista_pedidos.isEmpty() && eliminado) {
@@ -265,15 +272,17 @@ public class PedidoDAO {
                     if (!eliminado) {
                         System.out.println("Error de eliminacion");
                     } else {
+                        clean(2);
                         System.out.println("No hay Pedidos");
+                        clean(3);
                     }
                 }
 
                 System.out.println("¿Desea continuar eliminando pedidos?");
-                System.out.println("0. No");
-                System.out.println("1. Si");
-                aceptar = leerInt();
-                if (aceptar == 0) {
+                System.out.println("y -> Si");
+                System.out.println("n -> No");
+                aceptar = leerString().toLowerCase();
+                if (aceptar.equals("y")) {
                     salir = true;
                 }
             }
@@ -398,7 +407,8 @@ public class PedidoDAO {
      */
     static ArrayList<Pedido> listarPedidosFecha(java.sql.Date fechaInicio, java.sql.Date fechaFin) {
         ArrayList<Pedido> lista_pedidos = new ArrayList<>();
-        String sql_query = "SELECT * FROM pedido WHERE fecha>=? AND fecha<=?;";
+        String sql_query = "";
+        sql_query = "SELECT DISTINCT identificador FROM pedido WHERE fecha>=? AND fecha<=?;";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             pst.setDate(1, fechaInicio);
             pst.setDate(2, fechaFin);
@@ -439,7 +449,7 @@ public class PedidoDAO {
      */
     static ArrayList<Pedido> pedidosAlumno(String nombre_alumno) {
         ArrayList<Pedido> pedidos_alumno = new ArrayList<>();
-        String sql_query = "SELECT * FROM pedido WHERE cliente=?";
+        String sql_query = "SELECT DISTINCT identificador FROM pedido WHERE cliente=?";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             pst.setString(1, nombre_alumno);
             ResultSet rst = pst.executeQuery();
@@ -487,7 +497,6 @@ public class PedidoDAO {
         System.out.println("Lista de los pedidos actuales que se encuentran pendientes");
         clean(2);
         pedidos_pendientes.forEach(k -> {
-            System.out.println("Identificacion del pedido --> " + k.getIdentificacion() + ":>");
             System.out.println(k.infoView());
             clean(1);
         });
@@ -501,7 +510,7 @@ public class PedidoDAO {
      */
     static void pedidosPendientesFecha(java.sql.Date fecha) {
         ArrayList<Pedido> pedidos_pendientes = new ArrayList<>();
-        String sql_query = "SELECT * FROM pedido WHERE estado='PENDIENTE' AND fecha=?";
+        String sql_query = "SELECT DISTINCT identificador FROM pedido WHERE estado='PENDIENTE' AND fecha=?";
         try (PreparedStatement pst = con.prepareStatement(sql_query)) {
             pst.setDate(1, fecha);
             ResultSet rst = pst.executeQuery();

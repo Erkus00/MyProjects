@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-10-2022 a las 08:34:49
+-- Tiempo de generación: 26-10-2022 a las 12:42:08
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 8.1.6
 
@@ -35,34 +35,22 @@ CREATE TABLE IF NOT EXISTS `carta` (
   `nombre` varchar(255) NOT NULL,
   `tipo` varchar(255) NOT NULL,
   `precio` float NOT NULL,
-  `cantidad` int(11) NOT NULL,
   `disponibilidad` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `carta`
 --
 
-INSERT INTO `carta` (`id`, `nombre`, `tipo`, `precio`, `cantidad`, `disponibilidad`) VALUES
-(1, 'pitufo mixto', 'panaderia', 1.5, 0, 1),
-(2, 'pitufo jamon', 'panaderia', 2, 10, 1),
-(3, 'cocacola', 'bebida', 1, 20, 1),
-(4, 'bacon mayo', 'panaderia', 2.5, 20, 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cliente`
---
-
-DROP TABLE IF EXISTS `cliente`;
-CREATE TABLE IF NOT EXISTS `cliente` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre_completo` text NOT NULL,
-  `fecha_alta` date NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT INTO `carta` (`id`, `nombre`, `tipo`, `precio`, `disponibilidad`) VALUES
+(1, 'PITUFO MIXTO', 'PANADERIA', 1.5, 1),
+(2, 'COCACOLA', 'BEBIDA', 2, 1),
+(3, 'PITUFO BACON MAYO', 'PANADERIA', 2.5, 1),
+(4, 'CACAHUETES', 'OTRO', 1, 1),
+(5, 'FANTA NARANJA', 'BEBIDA', 2, 1),
+(6, 'PEPSI', 'BEBIDA', 2, 1),
+(7, 'ALTRAMUCES', 'OTRO', 0.5, 1);
 
 -- --------------------------------------------------------
 
@@ -77,20 +65,11 @@ CREATE TABLE IF NOT EXISTS `pedido` (
   `fecha` date NOT NULL,
   `cliente` text NOT NULL,
   `estado` varchar(255) NOT NULL,
+  `cantidad` int(11) NOT NULL,
   `producto` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `producto` (`producto`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `pedido`
---
-
-INSERT INTO `pedido` (`id`, `identificador`, `fecha`, `cliente`, `estado`, `producto`) VALUES
-(1, 1, '2022-10-10', 'pepe', 'pendiente', 1),
-(2, 1, '2022-10-10', 'pepe', 'pendiente', 3),
-(3, 2, '2022-10-10', 'juancho', 'pendiente', 1),
-(4, 2, '2022-10-10', 'juancho', 'pendiente', 3);
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Restricciones para tablas volcadas
