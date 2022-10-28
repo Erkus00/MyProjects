@@ -12,7 +12,7 @@ public class Main {
      * En él, se encuentran los menus con las llamadas a las funciones gestoras
      * de cada subparte o eleccion
      *
-     * @author Carlos Aragon Garcia
+     * @author Carlos Aragon Garcia y Arturo Guzman Lucena
      */
     public static void main(String[] args) throws Exception {
 
@@ -53,7 +53,6 @@ public class Main {
             }
         }
     }
-
 
 
 //------------------------------------------------------------------------
@@ -151,7 +150,7 @@ public class Main {
         return salir_sub;
     }
 
-    static void resumenEstadistico(){
+    static void resumenEstadistico() {
         info();
     }
 }
