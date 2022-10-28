@@ -2,6 +2,7 @@ package main;
 
 import static controller.PedidoDAO.*;
 import static controller.ProductoDAO.*;
+import static controller.ResumenDAO.info;
 import static view.View.*;
 
 public class Main {
@@ -42,6 +43,9 @@ public class Main {
                         salir_sub = ingreso();
                     }
                     break;
+                case 4:
+                    resumenEstadistico();
+                    break;
                 default:
                     clean(3);
                     System.out.println("Opcion no disponible");
@@ -49,6 +53,8 @@ public class Main {
             }
         }
     }
+
+
 
 //------------------------------------------------------------------------
     // Funciones que llaman a otras funciones para facilitar la lectura del codigo
@@ -143,5 +149,9 @@ public class Main {
             }
         }
         return salir_sub;
+    }
+
+    static void resumenEstadistico(){
+        info();
     }
 }

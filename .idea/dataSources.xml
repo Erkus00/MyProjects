@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="comanda_desayunos@localhost" uuid="f4805ba5-10b9-4ae8-92c2-688b2f5c8826">
+    <data-source source="LOCAL" name="comanda_desayunos@localhost" uuid="c24d7aa0-36ed-4797-b665-ef29a525a535">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>

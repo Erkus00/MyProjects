@@ -226,7 +226,7 @@ public class PedidoDAO {
             if (i > 0) {
                 finalizado = true;
             } else {
-                System.out.println("Algo ha fallado al insertar el Producto");
+                System.out.println("Algo ha fallado al eliminar el Producto");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -282,8 +282,10 @@ public class PedidoDAO {
                 System.out.println("y -> Si");
                 System.out.println("n -> No");
                 aceptar = leerString().toLowerCase();
-                if (aceptar.equals("y")) {
+                if (aceptar.equals("n")) {
                     salir = true;
+                } else {
+                    salir = false;
                 }
             }
         }
@@ -300,24 +302,24 @@ public class PedidoDAO {
             System.out.println("Indique el Id del pedido que desea marcar como recogido");
             Integer identificador_pedido = leerInt();
             System.out.println("¿Desea marcar como recogido este pedido?");
-            System.out.println(infoPedido(identificador_pedido));
-            System.out.println("0. No");
-            System.out.println("1.Si");
-            int eleccion = leerInt();
-            if (eleccion == 1) {
+            System.out.println(infoPedido(identificador_pedido).infoView());
+            System.out.println("y -> Si");
+            System.out.println("n -> No");
+            String eleccion = leerString().toLowerCase();
+            if (eleccion.equals("y")) {
                 clean(3);
                 recogerPedido(identificador_pedido);
                 System.out.println("Situacion actual de los pedidos");
-                listarAllPedidos(false).forEach(k -> {
+                listarAllPedidos(true).forEach(k -> {
                     System.out.println(k.infoView());
                 });
                 cleanDot(3);
             }
             System.out.println("¿Desea continuar marcando pedidos recogidos?");
-            System.out.println("0. No");
-            System.out.println("1. Si");
-            eleccion = leerInt();
-            if (eleccion == 0) {
+            System.out.println("y -> Si");
+            System.out.println("n -> No");
+            eleccion = leerString().toLowerCase();
+            if (eleccion.equals("n")) {
                 salir = true;
             }
         }

@@ -39,6 +39,7 @@ public class View {
         System.out.println("1. Consultar Datos");
         System.out.println("2. Modificar Datos");
         System.out.println("3. Ingresar Datos");
+        System.out.println("4. Resumen Estadistico");
         clean(1);
         return sc.nextInt();
 

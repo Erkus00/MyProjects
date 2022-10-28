@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/scripts/comanda_desayunos.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/controller/PedidoDAO.java" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/controller/ProductoDAO.java" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/controller/ResumenDAO.java" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/main/Main.java" dialect="MySQL" />
   </component>
 </project>

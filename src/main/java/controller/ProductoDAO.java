@@ -63,7 +63,7 @@ public class ProductoDAO {
             pst.setString(2, producto.getTipo());
             pst.setFloat(3, producto.getPrecio());
             pst.setBoolean(4, producto.isDisponible());
-            int i= pst.executeUpdate();
+            int i = pst.executeUpdate();
             if (i > 0) {
                 finalizado = true;
             } else {
@@ -133,6 +133,8 @@ public class ProductoDAO {
                 producto.setPrecio(precio);
                 producto.setDisponible(true);
                 insertado = insertarProducto(producto);
+            } else {
+                insertado = false;
             }
             clean(3);
             if (insertado) {

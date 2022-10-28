@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-10-2022 a las 12:42:08
+-- Tiempo de generación: 28-10-2022 a las 23:18:05
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 8.1.6
 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `carta` (
   `precio` float NOT NULL,
   `disponibilidad` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `carta`
@@ -50,7 +50,10 @@ INSERT INTO `carta` (`id`, `nombre`, `tipo`, `precio`, `disponibilidad`) VALUES
 (4, 'CACAHUETES', 'OTRO', 1, 1),
 (5, 'FANTA NARANJA', 'BEBIDA', 2, 1),
 (6, 'PEPSI', 'BEBIDA', 2, 1),
-(7, 'ALTRAMUCES', 'OTRO', 0.5, 1);
+(7, 'ALTRAMUCES', 'OTRO', 0.5, 1),
+(8, 'PATATAS', 'OTRO', 1.75, 1),
+(9, 'GOLOSINAS', 'OTRO', 0.5, 1),
+(10, 'PISTACHOS', 'OTRO', 2.5, 1);
 
 -- --------------------------------------------------------
 
@@ -69,7 +72,29 @@ CREATE TABLE IF NOT EXISTS `pedido` (
   `producto` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `producto` (`producto`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `pedido`
+--
+
+INSERT INTO `pedido` (`id`, `identificador`, `fecha`, `cliente`, `estado`, `cantidad`, `producto`) VALUES
+(4, 2, '2022-10-28', 'BENITO', 'RECOGIDO', 3, 3),
+(5, 2, '2022-10-28', 'BENITO', 'RECOGIDO', 3, 4),
+(6, 2, '2022-10-28', 'BENITO', 'RECOGIDO', 1, 2),
+(7, 3, '2022-10-28', 'JUANA', 'RECOGIDO', 2, 1),
+(8, 4, '2022-10-28', 'MACABRO', 'RECOGIDO', 2, 5),
+(9, 4, '2022-10-28', 'MACABRO', 'RECOGIDO', 2, 2),
+(10, 5, '2022-10-28', 'JAJA', 'PENDIENTE', 5, 6),
+(11, 5, '2022-10-28', 'JAJA', 'PENDIENTE', 2, 7),
+(12, 5, '2022-10-28', 'JAJA', 'PENDIENTE', 5, 2),
+(13, 6, '2022-10-28', 'PEPE', 'PENDIENTE', 1, 1),
+(14, 6, '2022-10-28', 'PEPE', 'PENDIENTE', 1, 3),
+(15, 7, '2022-10-28', 'JAJA', 'PENDIENTE', 3, 5),
+(16, 7, '2022-10-28', 'JAJA', 'PENDIENTE', 2, 3),
+(17, 8, '2022-10-28', 'MACABRO', 'PENDIENTE', 5, 5),
+(18, 8, '2022-10-28', 'MACABRO', 'PENDIENTE', 7, 1),
+(19, 9, '2022-10-28', 'BENITA', 'PENDIENTE', 3, 7);
 
 --
 -- Restricciones para tablas volcadas
