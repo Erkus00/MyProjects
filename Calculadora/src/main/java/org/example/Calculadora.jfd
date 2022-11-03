@@ -1,0 +1,306 @@
+JFDML JFormDesigner: "8.0.0.0.194" Java: "17.0.4.1" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "frame1"
+			"defaultCloseOperation": 3
+			"title": "Calculadora"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+				"rows": 8
+			} ) {
+				name: "panelPrincipal"
+				"background": new java.awt.Color( 30, 30, 30, 255 )
+				"focusable": false
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"rows": 3
+					"vgap": -10
+				} ) {
+					name: "panelSuperior"
+					"background": new java.awt.Color( 22, 22, 22, 255 )
+					"focusable": false
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "voidText"
+						"text": "Calculadora"
+						"foreground": new java.awt.Color( 30, 30, 30, 255 )
+						"font": &Font0 new java.awt.Font( "Inter", 0, 20 )
+						"horizontalAlignment": 0
+						"focusable": false
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "calcText"
+						"text": "Calculadora"
+						"foreground": sfield java.awt.Color white
+						"font": #Font0
+						"horizontalAlignment": 0
+						"focusable": false
+					} )
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "resultadoMini"
+					"horizontalAlignment": 11
+					"foreground": &Color0 new java.awt.Color( 134, 138, 154, 255 )
+					"font": new java.awt.Font( "Segoe UI", 0, 16 )
+					"verticalAlignment": 3
+					"focusable": false
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "resultadoGrande"
+					"text": "0"
+					"horizontalAlignment": 11
+					"foreground": #Color0
+					"font": new java.awt.Font( "Segoe UI", 0, 60 )
+					"verticalAlignment": 1
+					"autoscrolls": true
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"columns": 4
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "panelFila1"
+					"background": &Color1 new java.awt.Color( 22, 22, 22, 255 )
+					"focusable": false
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "vacio_2"
+						"background": &Color2 new java.awt.Color( 43, 48, 69, 255 )
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": new java.awt.Font( "Inter", 1, 24 )
+						"actionCommand": "Porcentaje"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "letraC"
+						"text": "C"
+						"background": #Color2
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": &Font1 new java.awt.Font( "Inter", 0, 20 )
+						"actionCommand": "BorrarTodo"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "dividir"
+						"background": #Color2
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/Images/divide-sign-24.png" )
+						"actionCommand": "Dividir"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "borrar"
+						"background": #Color2
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/Images/delete-3-24.png" )
+						"actionCommand": "Borrar"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"columns": 4
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "panelFila2"
+					"background": #Color1
+					"focusable": false
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num7"
+						"text": "7"
+						"background": &Color3 new java.awt.Color( 53, 59, 79, 255 )
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num8"
+						"text": "8"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num9"
+						"text": "9"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "multiplicar"
+						"text": "×"
+						"background": #Color2
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": new java.awt.Font( "Inter", 1, 24 )
+						"actionCommand": "Multiplicar"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"columns": 4
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "panelFila3"
+					"background": #Color1
+					"focusable": false
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num4"
+						"text": "4"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num5"
+						"text": "5"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num6"
+						"text": "6"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "restar"
+						"text": "-"
+						"background": #Color2
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": new java.awt.Font( "Inter", 1, 24 )
+						"actionCommand": "Restar"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"columns": 4
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "panelFila4"
+					"background": #Color1
+					"focusable": false
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num1"
+						"text": "1"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num2"
+						"text": "2"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num3"
+						"text": "3"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "sumar"
+						"text": "+"
+						"background": #Color2
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": new java.awt.Font( "Inter", 1, 24 )
+						"actionCommand": "Sumar"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"columns": 4
+					"hgap": 2
+					"vgap": 2
+				} ) {
+					name: "panelFila5"
+					"background": #Color1
+					"focusable": false
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "vacio"
+						"background": #Color2
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"focusable": false
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "num0"
+						"text": "0"
+						"background": #Color3
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": #Font1
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "punto"
+						"text": "."
+						"background": #Color2
+						"foreground": sfield java.awt.Color white
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": new java.awt.Font( "Inter", 1, 24 )
+						"actionCommand": "Numero"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "igual"
+						"text": "="
+						"background": new java.awt.Color( 77, 150, 188, 255 )
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"font": new java.awt.Font( "Inter", 1, 26 )
+						"actionCommand": "Igual"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAction", true ) )
+					} )
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 105, 90 )
+			"size": new java.awt.Dimension( 395, 680 )
+		} )
+	}
+}

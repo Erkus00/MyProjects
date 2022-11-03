@@ -1,0 +1,98 @@
+JFDML JFormDesigner: "8.0.0.0.194" Java: "17.0.4.1" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "dialogPane"
+				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
+				"background": new java.awt.Color( 39, 39, 39, 255 )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"columns": 1
+					"rows": 3
+					"vgap": 25
+				} ) {
+					name: "contentPanel"
+					"background": new java.awt.Color( 39, 39, 39, 255 )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+						"columns": 3
+					} ) {
+						name: "panel2"
+						"opaque": false
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label1"
+							"text": "Tamaño de la fuente"
+							"horizontalAlignment": 0
+							"foreground": sfield java.awt.Color white
+							"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+							"background": new java.awt.Color( 39, 39, 39, 255 )
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label4"
+						} )
+						add( new FormComponent( "javax.swing.JSpinner" ) {
+							name: "spinner1"
+							"maximumSize": new java.awt.Dimension( 32767, 30 )
+							"model": new javax.swing.SpinnerNumberModel( 0, 0, 100, 1 )
+							addEvent( new FormEvent( "javax.swing.event.ChangeListener", "stateChanged", "textoStateChanger", true ) )
+						} )
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+						"columns": 3
+					} ) {
+						name: "panel1"
+						"opaque": false
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label2"
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "colorButton"
+							"text": "Seleccionar color"
+							"background": new java.awt.Color( 14, 15, 12, 255 )
+							"border": new javax.swing.border.LineBorder( sfield java.awt.Color gray, 1, true )
+							"foreground": sfield java.awt.Color white
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "colorAction", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label3"
+						} )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "textPrueba"
+						"text": "Este es un texto de prueba"
+						"horizontalAlignment": 0
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"columns": 2
+					"hgap": 50
+				} ) {
+					name: "buttonBar"
+					"border": new javax.swing.border.EmptyBorder( 12, 0, 0, 0 )
+					"opaque": false
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "okButton"
+						"text": "OK"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "okAction", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "cancelButton"
+						"text": "Cancel"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancelAction", true ) )
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "South"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 195, 55 )
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}

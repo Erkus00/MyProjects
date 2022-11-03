@@ -1,0 +1,118 @@
+JFDML JFormDesigner: "8.0.0.0.194" Java: "17.0.4.1" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"background": new java.awt.Color( 26, 35, 35, 255 )
+			add( new FormComponent( "javax.swing.JTextArea" ) {
+				name: "textoArchivo"
+				"lineWrap": true
+				"wrapStyleWord": true
+				"editable": false
+				"background": new java.awt.Color( 39, 39, 39, 255 )
+				"foreground": sfield java.awt.Color white
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+				"columns": 2
+			} ) {
+				name: "panel1"
+				"background": new java.awt.Color( 26, 35, 35, 255 )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelInformacion"
+					"foreground": sfield java.awt.Color white
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelHora"
+					"horizontalAlignment": 11
+					"foreground": sfield java.awt.Color white
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "South"
+			} )
+			menuBar: new FormContainer( "javax.swing.JMenuBar", new FormLayoutManager( class javax.swing.JMenuBar ) ) {
+				name: "menuBar1"
+				"border": new javax.swing.border.LineBorder( new java.awt.Color( 65, 68, 80, 255 ), 1, true )
+				"borderPainted": false
+				"background": new java.awt.Color( 26, 35, 35, 255 )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "archivoMenu"
+					"text": "Archivo"
+					"background": new java.awt.Color( 20, 64, 80, 255 )
+					"foreground": sfield java.awt.Color white
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+						"columns": 1
+					} ) {
+						name: "panel2"
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "abrirButton"
+							"text": "Abrir"
+							"background": new java.awt.Color( 26, 35, 35, 255 )
+							"foreground": sfield java.awt.Color white
+							"borderPainted": false
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "abrirAction", true ) )
+						} )
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+						"columns": 1
+					} ) {
+						name: "panel3"
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "guardarButton"
+							"text": "Guardar"
+							"defaultCapable": false
+							"foreground": sfield java.awt.Color white
+							"background": new java.awt.Color( 26, 35, 35, 255 )
+							"borderPainted": false
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "guardarAction", true ) )
+						} )
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+						"columns": 1
+					} ) {
+						name: "panel4"
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "salirButton"
+							"text": "Salir"
+							"background": new java.awt.Color( 26, 35, 35, 255 )
+							"foreground": sfield java.awt.Color white
+							"borderPainted": false
+							"margin": new java.awt.Insets( 2, 24, 2, 24 )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "salirAction", true ) )
+						} )
+					} )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "estiloButton"
+					"text": "Estilo"
+					"foreground": sfield java.awt.Color white
+					"borderPainted": false
+					"contentAreaFilled": false
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "estiloAction", true ) )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "capitalizacionButton"
+					"text": "Capitalizacion"
+					"foreground": sfield java.awt.Color white
+					"borderPainted": false
+					"contentAreaFilled": false
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "capitalizacionAction", true ) )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "acercaDeButton"
+					"text": "Acerca de"
+					"borderPainted": false
+					"contentAreaFilled": false
+					"foreground": sfield java.awt.Color white
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "BotonAcercaDe", true ) )
+				} )
+			}
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 160, 50 )
+			"size": new java.awt.Dimension( 445, 370 )
+		} )
+	}
+}
