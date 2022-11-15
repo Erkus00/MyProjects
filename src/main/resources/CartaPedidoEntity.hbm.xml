@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="entity.CartaPedidoEntity" table="carta_pedido" schema="comanda_desayunos">
+        <composite-id mapped="true" class="entity.CartaPedidoEntityPK">
+            <key-property name="idProducto">
+                <column name="id_producto" sql-type="int(11)"/>
+            </key-property>
+            <key-property name="idPedido">
+                <column name="id_pedido" sql-type="int(11)"/>
+            </key-property>
+        </composite-id>
+        <property name="cantidad">
+            <column name="cantidad" sql-type="int(11)"/>
+        </property>
+        <many-to-one name="cartaByIdProducto" class="entity.CartaEntity">
+            <column name="id_producto"/>
+        </many-to-one>
+        <many-to-one name="pedidoByIdPedido" class="entity.PedidoEntity">
+            <column name="id_pedido"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>
