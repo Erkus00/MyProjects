@@ -7,7 +7,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import utils.HibernateUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 
 /**
@@ -36,21 +35,28 @@ public class CartaDAO {
      * Permite guardar un producto ya creado en la base de Datos
      *
      * @param producto Objeto de la clase Producto que se desea guardar en la Base de Datos
-     * @return <ul>
-     * <li><i>True</i>: Si se ha podido guardar</li>
-     * <li><i>False</i>: Si ha habido algun error. Lo que significa que no se actualiza nada</li>
-     * </ul>
+     * @return Id del producto insertado (Gestionado por la Base de Datos)
      */
     public static Integer insertarProducto(CartaEntity producto) throws Exception {
         Integer id;
 
-        try {
-            Session session = HibernateUtils.getSessionFactory().openSession();
+        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
-            session.save(producto);
-            id=producto.getId();
+            session.persist(producto);
             tst.commit();
-            session.close();
+
+
+        } catch (HibernateException e) {
+            throw new RuntimeException(e);
+        }
+
+        id = producto.getId();
+        System.out.println("Id insertada --> " + id);
+
+        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+            String sql_query = "select max(producto.id) FROM CartaEntity producto";
+            id = (Integer) session.createQuery(sql_query).uniqueResult();
+            producto.setId(id);
 
         } catch (HibernateException e) {
             throw new RuntimeException(e);
@@ -62,19 +68,19 @@ public class CartaDAO {
     /**
      * Permite eliminar un Producto de la BD
      *
-     * @param producto Producto que se desea eliminar de la base de Datos
+     * @param id Identificador unico del Producto que se desea eliminar de la base de Datos
      * @return <ul>
      * <li><i>True</i>: Si se ha podido Eliminar</li>
      * <li><i>False</i>: Si ha habido algun error. Lo que significa que no se actualiza nada</li>
      * </ul>
      */
-    public static boolean eliminarProducto(CartaEntity producto) throws Exception {
+    public static boolean eliminarProducto(Integer id) throws Exception {
         boolean eliminado = false;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
             String sql_query = "DELETE CartaEntity WHERE id=:id";
             Query query = session.createQuery(sql_query);
-            query.setParameter("id", producto.getClass());
+            query.setParameter("id", id);
             int i = query.executeUpdate();
 
             if (i != 0) {

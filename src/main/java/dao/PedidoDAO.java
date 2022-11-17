@@ -35,24 +35,28 @@ public class PedidoDAO {
      * Permite crear un nuevo Pedido, siempre que el producto exista
      *
      * @param pedido Objeto de tipo 'PedidoEntity' que se desea insertar en la BD
-     * @return <ul>
-     * <li><i>True</i>: Si se ha podido Crear</li>
-     * <li><i>False</i>: Si ha habido un error a la hora de crear el pedido. Lo que significa que no se actualiza nada</li>
-     * </ul>
+     * @return Id del pedido insertado. (Gestionado por la base de Datos)
      */
-    static boolean insertarPedido(PedidoEntity pedido) {
-        boolean insertado = false;
+    static Integer insertarPedido(PedidoEntity pedido) {
+        Integer id = null;
 
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
             session.persist(pedido);
             tst.commit();
-            insertado = true;
         } catch (HibernateException e) {
-            insertado = false;
             throw new RuntimeException(e);
         }
-        return insertado;
+
+        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+            String sql_query = "select max(pedido.id) FROM PedidoEntity pedido";
+            id = (Integer) session.createQuery(sql_query).uniqueResult();
+            pedido.setId(id);
+
+        } catch (HibernateException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
     }
 
     /**
@@ -194,40 +198,6 @@ public class PedidoDAO {
         }
         return lista_pedidos_cliente;
     }
-
-//    // FUNCIONES DE APOYO
-//
-//    /**
-//     * Consulta los distintos identificadores que hay en la Base de Datos. Así, permitirá que a la insercion de un pedidos se le asocie un identificador no repetido
-//     *
-//     * @return Listado con todas las identificaciones de los pedidos
-//     */
-//    static ArrayList<Integer> listarAllIdentificacion() {
-//        ArrayList<Integer> lista_identificadores_pedidos = new ArrayList<>();
-//        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
-//
-//            String sql_query = "SELECT distinct id from PedidoEntity pedido";
-//
-//            var query = session.createQuery(sql_query);
-//            lista_identificadores_pedidos = (ArrayList<Integer>) query.list();
-//
-//        } catch (HibernateException e) {
-//            System.err.println(e);
-//        }
-//        return lista_identificadores_pedidos;
-//    }
-//
-//    public static Integer maxIdentificadorPedidos() {
-//        ArrayList<Integer> all_identificadores = listarAllIdentificacion();
-//        AtomicReference<Integer> max_identificador = new AtomicReference<>(0);
-//        all_identificadores.forEach(k -> {
-//            if (k > max_identificador.get()) {
-//                max_identificador.set(k);
-//            }
-//        });
-//        return max_identificador.get();
-//    }
-
 
 }
 

@@ -7,8 +7,8 @@ import java.util.Collection;
 @Entity
 @Table(name = "carta", schema = "comanda_desayunos")
 public class CartaEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue
     @Column(name = "id", nullable = false)
     private int id;
     @Basic
