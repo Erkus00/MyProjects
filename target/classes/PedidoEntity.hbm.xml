@@ -17,11 +17,11 @@
         <property name="estado">
             <column name="estado" sql-type="varchar(255)"/>
         </property>
-        <set name="cartaPedidosById" inverse="true">
-            <key>
-                <column name="id_pedido"/>
-            </key>
-            <one-to-many not-found="ignore" class="entity.CartaPedidoEntity"/>
-        </set>
+<!--        <list name="cartaPedidosById" inverse="true">-->
+<!--            <key>-->
+<!--                <column name="id_pedido"/>-->
+<!--            </key>-->
+<!--            <one-to-many not-found="ignore" class="entity.CartaPedidoEntity"/>-->
+<!--        </list>-->
     </class>
 </hibernate-mapping>

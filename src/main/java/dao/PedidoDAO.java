@@ -37,8 +37,8 @@ public class PedidoDAO {
      * @param pedido Objeto de tipo 'PedidoEntity' que se desea insertar en la BD
      * @return Id del pedido insertado. (Gestionado por la base de Datos)
      */
-    static Integer insertarPedido(PedidoEntity pedido) {
-        Integer id = null;
+    public static Integer insertarPedido(PedidoEntity pedido) {
+        Integer id;
 
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
@@ -58,6 +58,11 @@ public class PedidoDAO {
         }
         return id;
     }
+
+//    public static PedidoEntity actualizarPedido(PedidoEntity pedido){
+//        PedidoEntity pedido_actualizado = new PedidoEntity();
+//        return pedido_actualizado;
+//    }
 
     /**
      * Permite eliminar un pedido siempre que este exista (Se encuentre hubicado en la base de datos)

@@ -1,10 +1,13 @@
 import dao.CartaDAO;
+import dao.CartaPedidoDAO;
 import dao.PedidoDAO;
 import entity.CartaEntity;
+import entity.CartaPedidoEntity;
 import entity.PedidoEntity;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Main {
 
@@ -49,14 +52,48 @@ public class Main {
 
 //
 //        // PedidoDAO-----------------------------------
+        // Creacion del Pedido
+        // Insertar pedido
+        Date now = new Date();
+        java.sql.Date sqlDate = new java.sql.Date(now.getTime());
 
         PedidoEntity new_pedido = new PedidoEntity();
-        // Mostrar todos los pedidos Pendientes
-        System.out.println("Pedidos Pendientes: ");
-        ArrayList<PedidoEntity> lista_pedidos = PedidoDAO.listarAllPedidos(true);
-        lista_pedidos.forEach(k -> {
-            System.out.println(k.toString());
+        new_pedido.setCliente("PruebaHibernate");
+        new_pedido.setFecha(sqlDate);
+        new_pedido.setEstado("PENDIENTE");
+        Integer id = PedidoDAO.insertarPedido(new_pedido);
+        System.out.println("Id insertada: " + id);
+
+        // Creacion del Listado de Productos deseados
+        ArrayList<CartaEntity> lista_productos = new ArrayList<>();
+        CartaEntity p1 = CartaDAO.infoProducto(2);
+        CartaEntity p2 = CartaDAO.infoProducto(3);
+        CartaEntity p3 = CartaDAO.infoProducto(5);
+        lista_productos.add(p1);
+        lista_productos.add(p2);
+        lista_productos.add(p3);
+
+        ArrayList<CartaPedidoEntity> asociar_productos = new ArrayList<>();
+        lista_productos.forEach(k -> {
+            CartaPedidoEntity cpe = new CartaPedidoEntity();
+            cpe.setIdProducto(k.getId());
+            cpe.setCantidad(k.getId() * 3);
+            cpe.setIdPedido(new_pedido.getId());
+            asociar_productos.add(cpe);
         });
+        CartaPedidoDAO.enlace(asociar_productos);
+//        id = PedidoDAO.insertarPedido(new_pedido);
+        System.out.println("Id del producto actualizado: "+id);
+
+
+
+
+//        // Mostrar todos los pedidos Pendientes
+//        System.out.println("Pedidos Pendientes: ");
+//        ArrayList<PedidoEntity> lista_pedidos = PedidoDAO.listarAllPedidos(true);
+//        lista_pedidos.forEach(k -> {
+//            System.out.println(k.toString());
+//        });
 //        // Mostrar todos los pedidos
 //        System.out.println("All Pedidos: ");
 //        lista_pedidos = PedidoDAO.listarAllPedidos(false);
