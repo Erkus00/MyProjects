@@ -1,25 +1,31 @@
 package entity;
 
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "carta_pedido", schema = "comanda_desayunos", catalog = "")
+@Table(name = "carta_pedido", schema = "comanda_desayunos")
 @IdClass(CartaPedidoEntityPK.class)
 public class CartaPedidoEntity {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id_producto", nullable = false)
+    @Column(name = "producto_id", nullable = false)
     private int idProducto;
+
     @Basic
     @Column(name = "cantidad", nullable = false)
     private int cantidad;
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id_pedido", nullable = false)
+    @Column(name = "id_pedido", nullable = false, insertable = false, updatable = false)
     private int idPedido;
+
     @ManyToOne
-    @JoinColumn(name = "id_producto", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "producto_id", referencedColumnName = "id", nullable = false)
     private CartaEntity cartaByIdProducto;
+
     @ManyToOne
     @JoinColumn(name = "id_pedido", referencedColumnName = "id", nullable = false)
     private PedidoEntity pedidoByIdPedido;

@@ -1,10 +1,11 @@
 package entity;
 
+
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Table(name = "carta", schema = "comanda_desayunos", catalog = "")
+@Table(name = "carta", schema = "comanda_desayunos")
 public class CartaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

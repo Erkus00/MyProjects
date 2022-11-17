@@ -148,7 +148,7 @@ TRUNCATE TABLE pedido;
 -- Filtros para la tabla `carta_pedido`
 --
 ALTER TABLE carta_pedido
-    ADD CONSTRAINT carta_pedido_ibfk_1 FOREIGN KEY (id_producto) REFERENCES carta (id),
+    ADD CONSTRAINT carta_pedido_ibfk_1 FOREIGN KEY (producto_id) REFERENCES carta (id),
   ADD CONSTRAINT `carta_pedido_ibfk_2` FOREIGN KEY (`id_pedido`) REFERENCES `pedido` (`id`);
 COMMIT;
 

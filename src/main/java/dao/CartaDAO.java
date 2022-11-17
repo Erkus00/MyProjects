@@ -7,6 +7,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import utils.HibernateUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 
 /**
@@ -40,38 +41,40 @@ public class CartaDAO {
      * <li><i>False</i>: Si ha habido algun error. Lo que significa que no se actualiza nada</li>
      * </ul>
      */
-    public static boolean insertarProducto(CartaEntity producto) throws Exception {
-        boolean insertado = false;
+    public static Integer insertarProducto(CartaEntity producto) throws Exception {
+        Integer id;
 
-        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+        try {
+            Session session = HibernateUtils.getSessionFactory().openSession();
             Transaction tst = session.beginTransaction();
-            session.persist(producto);
+            session.save(producto);
+            id=producto.getId();
             tst.commit();
-            insertado = true;
+            session.close();
+
         } catch (HibernateException e) {
-            insertado = false;
             throw new RuntimeException(e);
         }
-        return insertado;
+
+        return id;
     }
 
     /**
      * Permite eliminar un Producto de la BD
      *
-     * @param id Identificador (Id) unico del producto. Este es gestionado por la base de Datos
+     * @param producto Producto que se desea eliminar de la base de Datos
      * @return <ul>
      * <li><i>True</i>: Si se ha podido Eliminar</li>
      * <li><i>False</i>: Si ha habido algun error. Lo que significa que no se actualiza nada</li>
      * </ul>
      */
-    public static boolean eliminarProducto(Integer id) throws Exception {
+    public static boolean eliminarProducto(CartaEntity producto) throws Exception {
         boolean eliminado = false;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
-
-            String sql_query = "DELETE FROM CartaEntity WHERE id=:id";
+            String sql_query = "DELETE CartaEntity WHERE id=:id";
             Query query = session.createQuery(sql_query);
-            query.setParameter("id", id);
+            query.setParameter("id", producto.getClass());
             int i = query.executeUpdate();
 
             if (i != 0) {

@@ -4,25 +4,22 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="entity.CartaEntity" table="carta" schema="comanda_desayunos">
+    <class name="entity.PedidoEntity" table="pedido" schema="comanda_desayunos">
         <id name="id">
             <column name="id" sql-type="int(11)"/>
         </id>
-        <property name="nombre">
-            <column name="nombre" sql-type="varchar(255)"/>
+        <property name="fecha">
+            <column name="fecha" sql-type="date"/>
         </property>
-        <property name="tipo">
-            <column name="tipo" sql-type="varchar(255)"/>
+        <property name="cliente">
+            <column name="cliente" sql-type="text"/>
         </property>
-        <property name="precio">
-            <column name="precio" sql-type="float" precision="-1"/>
-        </property>
-        <property name="disponibilidad">
-            <column name="disponibilidad" sql-type="tinyint(1)"/>
+        <property name="estado">
+            <column name="estado" sql-type="varchar(255)"/>
         </property>
         <set name="cartaPedidosById" inverse="true">
             <key>
-                <column name="producto_id"/>
+                <column name="id_pedido"/>
             </key>
             <one-to-many not-found="ignore" class="entity.CartaPedidoEntity"/>
         </set>
