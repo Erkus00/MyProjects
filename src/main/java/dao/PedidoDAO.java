@@ -1,6 +1,8 @@
 package dao;
 
+import entity.CartaPedidoEntity;
 import entity.PedidoEntity;
+import model.Pedido;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -20,25 +22,38 @@ public class PedidoDAO {
      * @param identificador Identificador del pedido. Un mismo pedido comparte identificador
      * @return El Pedido guardado en la Base de Datos con el <i>Identificador</i> Indicado
      */
-    static PedidoEntity infoPedido(Integer identificador) {
-        PedidoEntity carta = new PedidoEntity();
+    static Pedido infoPedido(Integer identificador) {
+        PedidoEntity pedido_local = new PedidoEntity();
 
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
-            carta = session.get(carta.getClass(), identificador);
+            pedido_local = session.get(pedido_local.getClass(), identificador);
         } catch (HibernateException e) {
             System.err.println(e);
         }
-        return carta;
+        ArrayList<CartaPedidoEntity> pedido_entities = new ArrayList<>();
+        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+
+            String hql_query = "SELECT idProducto from CartaPedidoEntity pedido";
+            var query = session.createQuery(hql_query, CartaPedidoEntity.class);
+            pedido_entities = (ArrayList<CartaPedidoEntity>) query.list();
+
+        } catch (HibernateException e) {
+            System.err.println(e);
+        }
+        return new Pedido(pedido_local, pedido_entities);
     }
 
     /**
      * Permite crear un nuevo Pedido, siempre que el producto exista
      *
-     * @param pedido Objeto de tipo 'PedidoEntity' que se desea insertar en la BD
+     * @param pedido_local Objeto de tipo 'Pedido' que se desea insertar en la BD
      * @return Id del pedido insertado. (Gestionado por la base de Datos)
      */
-    public static Integer insertarPedido(PedidoEntity pedido) {
+    public static Integer insertarPedido(Pedido pedido_local) {
+        PedidoEntity pedido = pedido_local.getInfo_pedido();
+        ArrayList<CartaPedidoEntity> lista_productos = pedido_local.getInfo_productos();
         Integer id;
+
 
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
@@ -50,19 +65,40 @@ public class PedidoDAO {
 
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             String sql_query = "select max(pedido.id) FROM PedidoEntity pedido";
-            id = (Integer) session.createQuery(sql_query).uniqueResult();
+            id = session.createQuery(sql_query, Integer.class).uniqueResult();
             pedido.setId(id);
 
         } catch (HibernateException e) {
             throw new RuntimeException(e);
         }
+        ArrayList<CartaPedidoEntity> asociar_productos = new ArrayList<>();
+        lista_productos.forEach((k) -> {
+            CartaPedidoEntity cpe = new CartaPedidoEntity();
+            cpe.setIdProducto(k.getIdProducto());
+            cpe.setCantidad(k.getCantidad());
+            cpe.setIdPedido(id);
+            asociar_productos.add(cpe);
+        });
+        enlace(asociar_productos);
         return id;
     }
 
-//    public static PedidoEntity actualizarPedido(PedidoEntity pedido){
-//        PedidoEntity pedido_actualizado = new PedidoEntity();
-//        return pedido_actualizado;
-//    }
+    /**
+     * Permite insertar los productos elegidos en un pedido en la Tabla intermedia 'carta_pedido'
+     * @param selecciones
+     */
+    public static void enlace(ArrayList<CartaPedidoEntity> selecciones) {
+        for (Integer i = 0; i < selecciones.size(); i++) {
+            try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+                Transaction tst = session.beginTransaction();
+                session.persist(selecciones.get(i));
+                tst.commit();
+                System.out.println("\n\t" + i);
+            } catch (HibernateException e) {
+                throw new HibernateException(e);
+            }
+        }
+    }
 
     /**
      * Permite eliminar un pedido siempre que este exista (Se encuentre hubicado en la base de datos)
@@ -77,8 +113,8 @@ public class PedidoDAO {
         boolean eliminado = false;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
-            String sql_query = "DELETE FROM PedidoEntity WHERE id=:i";
-            Query query = session.createQuery(sql_query);
+            String sql_query = "DELETE PedidoEntity WHERE id=:i";
+            Query query = session.createQuery(sql_query, null);
             query.setParameter("i", id);
             int i = query.executeUpdate();
 
@@ -108,7 +144,7 @@ public class PedidoDAO {
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
             String sql_query = "UPDATE FROM PedidoEntity SET estado='RECOGIDO' WHERE id=:i";
-            Query query = session.createQuery(sql_query);
+            Query query = session.createQuery(sql_query, null);
             query.setParameter("i", id);
             int i = query.executeUpdate();
 
@@ -133,23 +169,28 @@ public class PedidoDAO {
      *                  </ul>
      * @return Listado con los pedidos que cumplen la condicion deseada
      */
-    public static ArrayList<PedidoEntity> listarAllPedidos(boolean pendiente) {
-        ArrayList<PedidoEntity> lista_pedidos = new ArrayList<>();
-        String sql_query = "";
+    public static ArrayList<Pedido> listarAllPedidos(boolean pendiente) {
+        ArrayList<Pedido> pedidos = new ArrayList<>();
+        ArrayList<Integer> lista_id_pedidos = new ArrayList<>();
+        String hql_query = "";
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             if (!pendiente) {
-                sql_query = "SELECT pedido from PedidoEntity pedido";
+                hql_query = "SELECT id from PedidoEntity pedido";
 
             } else {
-                sql_query = "SELECT pedido from PedidoEntity pedido where estado='PENDIENTE'";
+                hql_query = "SELECT id from PedidoEntity pedido where estado='PENDIENTE'";
             }
-            var query = session.createQuery(sql_query);
-            lista_pedidos = (ArrayList<PedidoEntity>) query.list();
+            var query = session.createQuery(hql_query, Integer.class);
+            lista_id_pedidos = (ArrayList<Integer>) query.list();
 
         } catch (HibernateException e) {
             System.err.println(e);
         }
-        return lista_pedidos;
+        lista_id_pedidos.forEach(k -> {
+            Pedido pedido_temp = infoPedido(k);
+            pedidos.add(pedido_temp);
+        });
+        return pedidos;
     }
 
     /**
@@ -162,24 +203,30 @@ public class PedidoDAO {
      *                     </ul>
      * @return ArrayList de los pedidos comprendidos desde la fecha de inicio hasta la fecha de fin; ambas inclusive
      */
-    static ArrayList<PedidoEntity> listarPedidosFecha(java.sql.Date fecha_inicio, java.sql.Date fecha_fin, boolean pendiente) {
-        ArrayList<PedidoEntity> lista_pedidos_fecha = new ArrayList<>();
+    static ArrayList<Pedido> listarPedidosFecha(java.sql.Date fecha_inicio, java.sql.Date fecha_fin, boolean pendiente) {
+        ArrayList<Pedido> pedidos = new ArrayList<>();
+        ArrayList<Integer> lista_id_pedidos_fecha = new ArrayList<>();
         String sql_query = "";
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             if (pendiente) {
-                sql_query = "SELECT pedido from PedidoEntity pedido where fecha>=:f1 AND fecha<=:f2 AND estado='PENDIENTE'";
+                sql_query = "SELECT id from PedidoEntity pedido where fecha>=:f1 AND fecha<=:f2 AND estado='PENDIENTE'";
             } else {
-                sql_query = "SELECT pedido from PedidoEntity pedido where fecha>=:f1 AND fecha<=:f2";
+                sql_query = "SELECT id from PedidoEntity pedido where fecha>=:f1 AND fecha<=:f2";
             }
-            var query = session.createQuery(sql_query);
+            var query = session.createQuery(sql_query, Integer.class);
             query.setParameter("f1", fecha_inicio);
             query.setParameter("f2", fecha_fin);
-            lista_pedidos_fecha = (ArrayList<PedidoEntity>) query.list();
+            lista_id_pedidos_fecha = (ArrayList<Integer>) query.list();
 
         } catch (HibernateException e) {
             System.err.println(e);
         }
-        return lista_pedidos_fecha;
+
+        lista_id_pedidos_fecha.forEach(k -> {
+            Pedido pedido_temp = infoPedido(k);
+            pedidos.add(pedido_temp);
+        });
+        return pedidos;
     }
 
     /**
@@ -188,22 +235,26 @@ public class PedidoDAO {
      * @param nombre_cliente Nombre del cliente del que se desean obtener los pedidos
      * @return ArrayList de los pedidos asociados a un cliente
      */
-    static ArrayList<PedidoEntity> pedidosCliente(String nombre_cliente) {
-        ArrayList<PedidoEntity> lista_pedidos_cliente = new ArrayList<>();
+    static ArrayList<Pedido> pedidosCliente(String nombre_cliente) {
+        ArrayList<Pedido> pedidos = new ArrayList<>();
+        ArrayList<Integer> lista_id_pedidos_cliente = new ArrayList<>();
         String sql_query = "";
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
 
-            sql_query = "SELECT pedido from PedidoEntity pedido where cliente=:c";
-            var query = session.createQuery(sql_query);
+            sql_query = "SELECT id from PedidoEntity pedido where cliente=:c";
+            var query = session.createQuery(sql_query, Integer.class);
             query.setParameter("c", nombre_cliente);
-            lista_pedidos_cliente = (ArrayList<PedidoEntity>) query.list();
+            lista_id_pedidos_cliente = (ArrayList<Integer>) query.list();
 
         } catch (HibernateException e) {
             System.err.println(e);
         }
-        return lista_pedidos_cliente;
+        lista_id_pedidos_cliente.forEach(k -> {
+            Pedido pedido_temp = infoPedido(k);
+            pedidos.add(pedido_temp);
+        });
+        return pedidos;
     }
-
 }
 
 

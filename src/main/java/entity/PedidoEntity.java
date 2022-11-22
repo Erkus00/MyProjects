@@ -20,8 +20,6 @@ public class PedidoEntity {
     @Basic
     @Column(name = "estado", nullable = false, length = 255)
     private String estado;
-//    @OneToMany(mappedBy = "pedidoByIdPedido")
-//    private Collection<CartaPedidoEntity> cartaPedidosById;
 
     public int getId() {
         return id;
@@ -55,11 +53,5 @@ public class PedidoEntity {
         this.estado = estado;
     }
 
-//    public Collection<CartaPedidoEntity> getCartaPedidosById() {
-//        return cartaPedidosById;
-//    }
-//
-//    public void setCartaPedidosById(Collection<CartaPedidoEntity> cartaPedidosById) {
-//        this.cartaPedidosById = cartaPedidosById;
-//    }
+
 }

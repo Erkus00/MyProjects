@@ -50,12 +50,9 @@ public class CartaDAO {
             throw new RuntimeException(e);
         }
 
-        id = producto.getId();
-        System.out.println("Id insertada --> " + id);
-
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             String sql_query = "select max(producto.id) FROM CartaEntity producto";
-            id = (Integer) session.createQuery(sql_query).uniqueResult();
+            id = session.createQuery(sql_query, Integer.class).uniqueResult();
             producto.setId(id);
 
         } catch (HibernateException e) {
@@ -79,7 +76,7 @@ public class CartaDAO {
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
             String sql_query = "DELETE CartaEntity WHERE id=:id";
-            Query query = session.createQuery(sql_query);
+            Query query = session.createQuery(sql_query, Integer.class);
             query.setParameter("id", id);
             int i = query.executeUpdate();
 
@@ -103,7 +100,7 @@ public class CartaDAO {
         ArrayList<CartaEntity> carta = new ArrayList<>();
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             String sql_query = "SELECT carta from CartaEntity carta";
-            var query = session.createQuery(sql_query);
+            var query = session.createQuery(sql_query, CartaEntity.class);
             carta = (ArrayList<CartaEntity>) query.list();
 
         } catch (HibernateException e) {
