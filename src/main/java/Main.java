@@ -1,96 +1,150 @@
-//import dao.CartaDAO;
-//import dao.CartaPedidoDAO;
-//import dao.PedidoDAO;
-//import entity.CartaEntity;
-//import entity.CartaPedidoEntity;
-//import entity.PedidoEntity;
-//
-//import javax.persistence.criteria.CriteriaBuilder;
-//import java.util.ArrayList;
-//import java.util.Date;
-//
-//public class Main {
-//
-//    public static void main(final String[] args) throws Exception {
-////
-////        //ProductoDAO------------------------------------------------
-////        // Carta
-////        ArrayList<CartaEntity> carta = CartaDAO.carta();
-////        for (CartaEntity e : carta) {
-////            System.out.println(e.cartaView());
-////        }
-////
-////         Insertar Producto
-//        CartaEntity producto_nuevo = new CartaEntity();
-//        producto_nuevo.setNombre("Agua");
-//        producto_nuevo.setTipo("Bebida");
-//        producto_nuevo.setPrecio(2.0F);
-//        producto_nuevo.setDisponibilidad((byte) 1);
-//        Integer id_insertado = CartaDAO.insertarProducto(producto_nuevo);
-//        System.out.println("Producto Insertado con id: " + id_insertado);
-//        System.out.println(producto_nuevo.getId());
-//////
-//////        // Carta
-//////        carta = CartaDAO.carta();
-//////        for (CartaEntity e : carta) {
-//////            System.out.println(e.cartaView());
-//////        }
-//////
-//////        // Eliminar Producto. Cuidado ya que no se puede eliminar si existe un pedido con este producto. Lo mejor seria convertirlo en no Disponible
-//////        boolean eliminado = CartaDAO.eliminarProducto(producto_nuevo.getId());
-//////        System.out.println("Se ha eliminado el Producto "+producto_nuevo.getId()+"?:" + eliminado);
-//////
-////        // Carta
-//////        carta = CartaDAO.carta();
-//////        for (CartaEntity e : carta) {
-//////            System.out.println(e.cartaView());
-//////        }
-//////
-//////        // Info de un producto
-//////        CartaEntity producto = CartaDAO.infoProducto(3);
-//////        System.out.println(producto.cartaView());
-////
-//////
-//////        // PedidoDAO-----------------------------------
-////        // Creacion del Pedido
-////        // Insertar pedido
-////        Date now = new Date();
-////        java.sql.Date sqlDate = new java.sql.Date(now.getTime());
-////
-////        PedidoEntity new_pedido = new PedidoEntity();
-////        new_pedido.setCliente("PruebaHibernate");
-////        new_pedido.setFecha(sqlDate);
-////        new_pedido.setEstado("PENDIENTE");
-////        Integer id = PedidoDAO.insertarPedido(new_pedido);
-////        System.out.println("Id insertada: " + id);
-////
-////        // Creacion del Listado de Productos deseados
-////        ArrayList<CartaEntity> lista_productos = new ArrayList<>();
-////        CartaEntity p1 = CartaDAO.infoProducto(2);
-////        CartaEntity p2 = CartaDAO.infoProducto(3);
-////        CartaEntity p3 = CartaDAO.infoProducto(5);
-////        lista_productos.add(p1);
-////        lista_productos.add(p2);
-////        lista_productos.add(p3);
-////
-////
-//////        id = PedidoDAO.insertarPedido(new_pedido);
-////        System.out.println("Id del producto actualizado: "+id);
-////
-////
-////
-////
-//////        // Mostrar todos los pedidos Pendientes
-//////        System.out.println("Pedidos Pendientes: ");
-//////        ArrayList<PedidoEntity> lista_pedidos = PedidoDAO.listarAllPedidos(true);
-//////        lista_pedidos.forEach(k -> {
-//////            System.out.println(k.toString());
-//////        });
-//////        // Mostrar todos los pedidos
-//////        System.out.println("All Pedidos: ");
-//////        lista_pedidos = PedidoDAO.listarAllPedidos(false);
-//////        lista_pedidos.forEach(k -> {
-//////            System.out.println(k.toString());
-//////        });
-//    }
-//}
+
+import static controller.PedidoController.*;
+import static controller.ProductoController.insercionProducto;
+import static dao.PedidoDAO.*;
+import static dao.CartaDAO.*;
+import static view.View.*;
+
+public class Main {
+
+    /**
+     * Clase principal del programa de comandas de los desayunos.
+     * En él, se encuentran los menus con las llamadas a las funciones gestoras
+     * de cada subparte o eleccion
+     *
+     * @author Carlos Aragon Garcia y Arturo Guzman Lucena
+     */
+    public static void main(String[] args) throws Exception {
+
+        boolean salir = false;
+        while (!salir) {
+            // Se muestra el menu visual al Usuario y se recoge su eleccion
+            Integer opcion = menuInicio();
+            boolean salir_sub = false;
+            clean(5);
+
+            switch (opcion) {
+                case 0:
+                    salir = true;
+                    salir();
+                    break;
+                case 1:
+                    while (!salir_sub) {
+                        salir_sub = inicio();
+                    }
+                    break;
+                case 2:
+                    while (!salir_sub) {
+                        salir_sub = modificacion();
+                    }
+                    break;
+                case 3:
+                    while (!salir_sub) {
+                        salir_sub = ingreso();
+                    }
+                    break;
+                default:
+                    clean(3);
+                    System.out.println("Opcion no disponible");
+                    break;
+            }
+        }
+    }
+
+
+//------------------------------------------------------------------------
+    // Funciones que llaman a otras funciones para facilitar la lectura del codigo
+
+    /**
+     * Gestiona la eleccion del usuario en el menu de Consulta
+     *
+     * @return <ul>
+     * <li>TRUE: Si se desea salir del subMenu</li>
+     * <li>FALSE: Si se desea continuar en el subMenu</li>
+     * </ul>
+     */
+    static boolean inicio() {
+        clean(2);
+        Integer elector = menuConsulta();
+        cleanDot(3);
+        boolean salir_sub = false;
+
+        switch (elector) {
+            // Salir
+            case 0 -> salir_sub = true;
+            // Listar comandas de un dia
+            case 1 -> gestorFechas(1);
+            //Mostrar todas los pedidos pendientes
+            case 2 -> pedidosPendientes();
+            // Listar las comandas pendientes y
+            case 3 -> gestorFechas(0);
+            case 4 -> {
+                System.out.println("--------------------------------");
+                carta().forEach(k -> {
+                    System.out.println(k.cartaView());
+                });
+                System.out.println("--------------------------------");
+            }
+            case 5 -> gestorConsultaAlumno();
+            default -> {
+                clean(5);
+                System.out.println("Opcion no disponible");
+                clean(3);
+            }
+        }
+        return salir_sub;
+    }
+
+    /**
+     * Gestiona la eleccion del usuario en el menu de Modificacion
+     *
+     * @return <ul>
+     * <li>TRUE: Si se desea salir del subMenu</li>
+     * <li>FALSE: Si se desea continuar en el subMenu</li>
+     * </ul>
+     */
+    static boolean modificacion() throws Exception {
+        Integer elector = menuMod();
+        cleanDot(3);
+        boolean salir_sub = false;
+
+        switch (elector) {
+            case 0 -> salir_sub = true;
+            case 1 -> gestorEliminacionPedido();
+            case 2 -> marcarPedidoRecogido();
+            default -> {
+                clean(5);
+                System.out.println("Opcion no disponible");
+                clean(3);
+            }
+        }
+        return salir_sub;
+    }
+
+    /**
+     * Gestiona la eleccion del usuario en el menu de Infreso
+     *
+     * @return <ul>
+     * <li>TRUE: Si se desea salir del subMenu</li>
+     * <li>FALSE: Si se desea continuar en el subMenu</li>
+     * </ul>
+     */
+    static boolean ingreso() throws Exception {
+        Integer elector = menuIngreso();
+        clean(3);
+        boolean salir_sub = false;
+
+        switch (elector) {
+            case 0 -> salir_sub = true;
+            case 1 -> insercionPedido();
+            case 2 -> insercionProducto();
+            default -> {
+                clean(5);
+                System.out.println("Opcion no disponible");
+                clean(3);
+            }
+        }
+        return salir_sub;
+    }
+
+}

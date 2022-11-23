@@ -11,6 +11,8 @@ import utils.HibernateUtils;
 
 import java.util.ArrayList;
 
+import static view.View.clean;
+
 /**
  * Controlador de los Pedidos (TABLE: pedido)
  */
@@ -22,7 +24,7 @@ public class PedidoDAO {
      * @param identificador Identificador del pedido. Un mismo pedido comparte identificador
      * @return El Pedido guardado en la Base de Datos con el <i>Identificador</i> Indicado
      */
-    static Pedido infoPedido(Integer identificador) {
+    public static Pedido infoPedido(Integer identificador) {
         PedidoEntity pedido_local = new PedidoEntity();
 
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
@@ -109,7 +111,7 @@ public class PedidoDAO {
      * <li><i>False</i>: Si ha habido un error a la hora de eliminar el pedido.Lo que significa que no se actualiza nada</li>
      * </ul>
      */
-    static boolean eliminarPedido(Integer id) throws Exception {
+    public static boolean eliminarPedido(Integer id) throws Exception {
         boolean eliminado = false;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
@@ -139,7 +141,7 @@ public class PedidoDAO {
      * </ul>
      */
 
-    static boolean recogerPedido(Integer id) throws Exception {
+    public static boolean recogerPedido(Integer id) throws Exception {
         boolean updated = false;
         try (Session session = HibernateUtils.getSessionFactory().openSession()) {
             Transaction tst = session.beginTransaction();
@@ -203,7 +205,7 @@ public class PedidoDAO {
      *                     </ul>
      * @return ArrayList de los pedidos comprendidos desde la fecha de inicio hasta la fecha de fin; ambas inclusive
      */
-    static ArrayList<Pedido> listarPedidosFecha(java.sql.Date fecha_inicio, java.sql.Date fecha_fin, boolean pendiente) {
+    public static ArrayList<Pedido> listarPedidosFecha(java.sql.Date fecha_inicio, java.sql.Date fecha_fin, boolean pendiente) {
         ArrayList<Pedido> pedidos = new ArrayList<>();
         ArrayList<Integer> lista_id_pedidos_fecha = new ArrayList<>();
         String sql_query = "";
@@ -235,7 +237,7 @@ public class PedidoDAO {
      * @param nombre_cliente Nombre del cliente del que se desean obtener los pedidos
      * @return ArrayList de los pedidos asociados a un cliente
      */
-    static ArrayList<Pedido> pedidosCliente(String nombre_cliente) {
+    public static ArrayList<Pedido> pedidosCliente(String nombre_cliente) {
         ArrayList<Pedido> pedidos = new ArrayList<>();
         ArrayList<Integer> lista_id_pedidos_cliente = new ArrayList<>();
         String sql_query = "";
@@ -254,6 +256,21 @@ public class PedidoDAO {
             pedidos.add(pedido_temp);
         });
         return pedidos;
+    }
+
+    /**
+     * Consulta a la BD los pedidos que se encuentran pendientes
+     */
+
+    public static void pedidosPendientes() {
+        ArrayList<Pedido> pedidos_pendientes = listarAllPedidos(true);
+
+        System.out.println("Lista de los pedidos actuales que se encuentran pendientes");
+        clean(2);
+        pedidos_pendientes.forEach(k -> {
+            System.out.println(k.infoView());
+            clean(1);
+        });
     }
 }
 
