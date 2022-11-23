@@ -10,7 +10,7 @@ public class CartaPedidoEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "producto_id", nullable = false)
+    @Column(name = "id_producto", nullable = false)
     private int idProducto;
 
     @Basic
@@ -23,7 +23,7 @@ public class CartaPedidoEntity {
     private int idPedido;
 
     @ManyToOne
-    @JoinColumn(name = "producto_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_producto", referencedColumnName = "id", nullable = false)
     private CartaEntity cartaByIdProducto;
 
     @ManyToOne

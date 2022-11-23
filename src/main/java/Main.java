@@ -1,6 +1,6 @@
 
 import static controller.PedidoController.*;
-import static controller.ProductoController.insercionProducto;
+import static controller.ProductoController.*;
 import static dao.PedidoDAO.*;
 import static dao.CartaDAO.*;
 import static view.View.*;

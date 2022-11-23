@@ -1,5 +1,6 @@
 package controller;
 
+import entity.CartaEntity;
 import entity.CartaPedidoEntity;
 import entity.PedidoEntity;
 import model.Fecha;
@@ -12,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static dao.CartaDAO.carta;
+import static dao.CartaDAO.infoProducto;
 import static dao.PedidoDAO.*;
 import static view.View.*;
 import static view.View.clean;
@@ -71,11 +73,13 @@ public class PedidoController {
                     CartaPedidoEntity prod = new CartaPedidoEntity();
                     prod.setIdProducto(id_producto);
                     prod.setCantidad(cant);
+                    comanda.add(prod);
                 }
             } else {
                 CartaPedidoEntity prod = new CartaPedidoEntity();
                 prod.setIdProducto(id_producto);
                 prod.setCantidad(cant);
+                comanda.add(prod);
             }
 
             clean(1);
@@ -85,7 +89,7 @@ public class PedidoController {
             cleanDot(1);
             comanda.forEach((k) -> {
                 if (k.getCantidad() > 0) {
-                    System.out.println(k.getCartaByIdProducto().getNombre() + " -> Cantidad: " + k.getCantidad());
+                    System.out.println(infoProducto(k.getIdProducto()).getNombre() + " -> Cantidad: " + k.getCantidad());
                 }
             });
             clean(1);
@@ -103,7 +107,7 @@ public class PedidoController {
         System.out.println("Nombre de pedido: " + nombre);
         comanda.forEach((k) -> {
             if (k.getCantidad() > 0) {
-                System.out.println(k.getCartaByIdProducto().getNombre() + " -> Cantidad: " + k.getCantidad());
+                System.out.println(infoProducto(k.getIdProducto()).getNombre() + " -> Cantidad: " + k.getCantidad());
             }
         });
         cleanDot(1);
@@ -122,8 +126,8 @@ public class PedidoController {
             pedido.setFecha(sqlDate);
             clean(2);
             Pedido pedidoLocal = new Pedido(pedido,comanda);
-            pedidoLocal.recibo();
             insertado = insertarPedido(pedidoLocal);
+            pedidoLocal.recibo();
             if (insertado!=null) {
                 System.out.println("Pedido realizado correctamente");
             } else {
@@ -247,7 +251,9 @@ public class PedidoController {
                 //Pedidos pendientes de Fecha
                 System.out.println("Siga los pasos para indicar la fecha de consulta");
                 Fecha fecha = ControllerFecha.leerFecha();
-                listarPedidosFecha(fecha.getSql_date(),fecha.getSql_date(),true);
+                listarPedidosFecha(fecha.getSql_date(),fecha.getSql_date(),true).forEach(k -> {
+                    System.out.println(k.infoView());
+                });
             }
         }
     }

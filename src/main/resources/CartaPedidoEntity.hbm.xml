@@ -7,7 +7,7 @@
     <class name="entity.CartaPedidoEntity" table="carta_pedido" schema="comanda_desayunos">
         <composite-id mapped="true" class="entity.CartaPedidoEntityPK">
             <key-property name="idProducto">
-                <column name="producto_id" sql-type="int(11)"/>
+                <column name="id_producto" sql-type="int(11)"/>
             </key-property>
             <key-property name="idPedido">
                 <column name="id_pedido" sql-type="int(11)"/>
@@ -17,7 +17,7 @@
             <column name="cantidad" sql-type="int(11)"/>
         </property>
         <many-to-one name="cartaByIdProducto" class="entity.CartaEntity" insert="false" update="false">
-            <column name="producto_id"/>
+            <column name="id_producto"/>
         </many-to-one>
         <many-to-one name="pedidoByIdPedido" class="entity.PedidoEntity" insert="false" update="false">
             <column name="id_pedido"/>

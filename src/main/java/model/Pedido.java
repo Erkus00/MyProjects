@@ -6,6 +6,8 @@ import entity.PedidoEntity;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static dao.CartaDAO.infoProducto;
+import static view.View.clean;
 import static view.View.cleanDot;
 
 public class Pedido {
@@ -13,8 +15,10 @@ public class Pedido {
     private ArrayList<CartaPedidoEntity> info_productos;
 
     public Pedido(PedidoEntity pedido, ArrayList<CartaPedidoEntity> info_productos) {
-        this.info_pedido = pedido;
-        this.info_productos = info_productos;
+        if(pedido!=null && info_productos!=null){
+            this.info_pedido = pedido;
+            this.info_productos = info_productos;
+        }
     }
 
     public PedidoEntity getInfo_pedido() {
@@ -41,12 +45,14 @@ public class Pedido {
     public String infoView() {
         System.out.println(">>-------------------------->>");
         System.out.println("Identificacion del pedido --> " + info_pedido.getId() + " :>");
-        System.out.println("----------------------------------------------------------------------");
+        cleanDot(2);
         info_productos.forEach((k) -> {
-            System.out.println(k.getCartaByIdProducto().cartaView() + " º | º Cantidad: " + k.getCantidad());
+            System.out.println(infoProducto(k.getIdProducto()).cartaView() + " º | º Cantidad: " + k.getCantidad());
         });
+        clean(2);
+        System.out.println(" \t Estado: "+info_pedido.getEstado());
 
-        return "\n Cliente: " + info_pedido.getCliente() + "\n || Fecha: " + info_pedido.getFecha() + "\n" + "----------------------------------------------------------------------";
+        return "\n\t Cliente: " + info_pedido.getCliente() + "\n|| Fecha: " + info_pedido.getFecha() + "\n " + "----------------------------------------------------------------------";
     }
 
     /**
@@ -62,8 +68,8 @@ public class Pedido {
         System.out.println("Productos: ");
         info_productos.forEach((k) -> {
             if (k.getCantidad() > 0) {
-                System.out.println(k.getCartaByIdProducto().cartaView() + " -- Uds: " + k.getCantidad());
-                float precio = (float) k.getCartaByIdProducto().getPrecio() * k.getCantidad();
+                System.out.println(infoProducto(k.getIdProducto()).cartaView() + " -- Uds: " + k.getCantidad());
+                float precio = (float) infoProducto(k.getIdProducto()).getPrecio() * k.getCantidad();
                 precio_total.updateAndGet(v1 -> (v1 + precio));
             }
         });
