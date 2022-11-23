@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+
+<DialogPane fx:id="dialogPrincipalDatos" stylesheets="@PrincipalCSS.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.EstadisticaController">
+   <content>
+      <TabPane fx:id="tabPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="panaderiaTab" text="Panaderia">
+               <content>
+                  <BorderPane fx:id="panaderiaBorderPane" prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <BarChart fx:id="panaderiaChart" BorderPane.alignment="CENTER">
+                          <xAxis>
+                            <CategoryAxis fx:id="panaderiaChartX" label="Pedido" side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis fx:id="panaderiaChartY" label="Nº de pedidos" side="LEFT" />
+                          </yAxis>
+                        </BarChart>
+                     </center>
+                  </BorderPane>
+               </content>
+          </Tab>
+          <Tab fx:id="bebidasTab" text="Bebidas">
+               <content>
+                  <BorderPane fx:id="bebidasBorderPane" prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <BarChart fx:id="bebidasChart" BorderPane.alignment="CENTER">
+                           <xAxis>
+                              <CategoryAxis fx:id="bebidasChartX" label="Pedido" side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis fx:id="bebidasChartY" label="Nº de pedidos" side="LEFT" />
+                           </yAxis>
+                        </BarChart>
+                     </center>
+                  </BorderPane>
+               </content>
+          </Tab>
+            <Tab fx:id="otrosTab" text="Otros">
+               <content>
+                  <BorderPane fx:id="otrosBorderPane" prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <BarChart fx:id="otrosChart" BorderPane.alignment="CENTER">
+                           <xAxis>
+                              <CategoryAxis fx:id="otrosChartX" label="Pedido" side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis fx:id="otrosChartY" label="Nº de pedidos" side="LEFT" />
+                           </yAxis>
+                        </BarChart>
+                     </center>
+                  </BorderPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </content>
+   <buttonTypes>
+      <ButtonType fx:constant="CLOSE" />
+   </buttonTypes>
+   <header>
+      <TextField fx:id="datosDialogText" alignment="CENTER" editable="false" pickOnBounds="false" text="Productos vendidos" />
+   </header>
+</DialogPane>

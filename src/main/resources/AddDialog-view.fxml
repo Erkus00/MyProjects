@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<DialogPane fx:id="dialogAddDialog" stylesheets="@PrincipalCSS.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.AddDialogController">
+   <content>
+      <GridPane fx:id="gridAddDialogPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="390.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="252.5999755859375" minWidth="10.0" prefWidth="226.199951171875" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.0" minWidth="10.0" prefWidth="216.800048828125" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Text fx:id="fechaText" strokeType="OUTSIDE" strokeWidth="0.0" text="Fecha:" translateX="16.0" wrappingWidth="86.57425308227539">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <DatePicker fx:id="fechaDatePicker" prefHeight="26.0" prefWidth="244.0" showWeekNumbers="true" GridPane.columnIndex="1" />
+            <Text fx:id="clienteText" strokeType="OUTSIDE" strokeWidth="0.0" text="Cliente:" translateX="16.0" wrappingWidth="86.57425308227539" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <TextField fx:id="clienteTextPicker" prefHeight="26.0" prefWidth="194.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Text fx:id="estadoText" strokeType="OUTSIDE" strokeWidth="0.0" text="Estado:" translateX="16.0" wrappingWidth="86.57425308227539" GridPane.rowIndex="2">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <ComboBox fx:id="estadoPicker" prefHeight="26.0" prefWidth="230.0" visibleRowCount="2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Text fx:id="productosText" strokeType="OUTSIDE" strokeWidth="0.0" text="Productos" translateX="156.0" translateY="8.0" wrappingWidth="66.57423782348633" GridPane.rowIndex="3">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="bocadillosText" strokeType="OUTSIDE" strokeWidth="0.0" text="Bocadillos" translateX="157.0" wrappingWidth="66.57423782348633" GridPane.rowIndex="5">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Spinner fx:id="pitufoMixtoNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Text fx:id="pitufoMixtoText" strokeType="OUTSIDE" strokeWidth="0.0" text="Pitufo Mixto" translateX="16.0" wrappingWidth="86.57425308227539" GridPane.rowIndex="6">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Spinner fx:id="pitufoBMNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Text fx:id="pitufoBMText" strokeType="OUTSIDE" strokeWidth="0.0" text="Pitufo Bacon Mayo" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="7">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="bebidasText" strokeType="OUTSIDE" strokeWidth="0.0" text="Bebidas" translateX="163.0" wrappingWidth="52.97420120239258" GridPane.rowIndex="8">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Spinner fx:id="cocaNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Spinner fx:id="fantaNaranjaNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <Spinner fx:id="pepsiNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <Text fx:id="cocaText" strokeType="OUTSIDE" strokeWidth="0.0" text="Cocacola" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="9">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="fantaNaranjaText" strokeType="OUTSIDE" strokeWidth="0.0" text="Fanta de naranja" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="10">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="pepsiText" strokeType="OUTSIDE" strokeWidth="0.0" text="Pepsi" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="11">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Spinner fx:id="cacahuetesNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+            <Spinner fx:id="altramucesNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+            <Spinner fx:id="patatasNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+            <Spinner fx:id="golosinasNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+            <Spinner fx:id="pistachosNumberPicker" translateX="20.0" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+            <Text fx:id="cacahuetesText" strokeType="OUTSIDE" strokeWidth="0.0" text="Cacahuetes" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="13">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="altramucesText" strokeType="OUTSIDE" strokeWidth="0.0" text="Altramuces" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="14">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="patatasText" strokeType="OUTSIDE" strokeWidth="0.0" text="Patatas" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="15">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="golosinasText" strokeType="OUTSIDE" strokeWidth="0.0" text="Golosinas" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="16">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="pistachosText" strokeType="OUTSIDE" strokeWidth="0.0" text="Pistachos" translateX="16.0" wrappingWidth="120.97421646118164" GridPane.rowIndex="17">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Separator fx:id="separator1" prefHeight="25.0" prefWidth="200.0" translateX="-12.0" GridPane.rowIndex="4" />
+            <Separator fx:id="separator2" maxWidth="500.0" prefHeight="26.0" prefWidth="213.0" translateX="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Separator fx:id="separator21" maxWidth="500.0" prefHeight="26.0" prefWidth="213.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Separator fx:id="separator11" prefHeight="25.0" prefWidth="200.0" GridPane.rowIndex="4" />
+         </children>
+      </GridPane>
+   </content>
+   <buttonTypes>
+      <ButtonType fx:constant="OK" />
+      <ButtonType fx:constant="CANCEL" />
+   </buttonTypes>
+</DialogPane>

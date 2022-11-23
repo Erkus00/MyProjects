@@ -1,0 +1,272 @@
+
+#tablaView {
+    -fx-padding: -1;
+    -fx-background-color: #4fc3a1;
+    -fx-border-color: #4fc3a1;
+    -fx-selection-bar-non-focused: rgba(50, 73, 96, 0.7);
+}
+
+.table-view .column-header {
+    -fx-background-color: #324960;
+    -fx-font-weight: bold;
+}
+
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+
+#tablaView .table-row-cell {
+    -fx-background-color: #4fc3a1;
+    -fx-alignment: CENTER;
+    -fx-text-alignment: center;
+    -fx-border-color: #efeeee;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-border-width: 0.15px
+}
+
+#tablaView .table-row-cell:empty {
+    -fx-border-width: 0px;
+}
+
+#tablaView .table-cell {
+    -fx-border-color: white;
+    -fx-border-width: 0.15px;
+}
+
+#tablaView .table-cell:empty {
+    -fx-border-width: 0px;
+}
+
+#tablaView .table-row-cell:selected {
+    -fx-background-color: #324960;
+}
+
+#tablaView .table-row-cell:empty {
+    -fx-border-width: 0px;
+}
+
+#toolBarra {
+    -fx-background-color: #324960;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: black;
+}
+
+#toolBarra .button {
+    -fx-background-color: #5ac8ea;
+    -fx-border-color: black;
+    -fx-border-width: 1.5;
+    -fx-text-fill: black;
+    -fx-border-radius: 7;
+    -fx-background-radius: 9;
+}
+
+
+/**
+#idColumn {
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+    -fx-background-color: #58C6A5;
+    -fx-border-color: #efeeee;
+    -fx-text-fill: black;
+    -fx-border-width: 0.3px
+}
+
+#idColumn:empty {
+    -fx-border-width: 0px;
+}
+
+#clienteColumn {
+    -fx-alignment: CENTER;
+    -fx-background-color: #324960;
+    -fx-border-color: #efeeee;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-border-width: 0.3px;
+}
+
+#clienteColumn:empty {
+    -fx-border-width: 0px;
+}
+
+#productosColumn:default {
+    -fx-alignment: CENTER;
+    -fx-background-color: #58C6A5;
+    -fx-font-weight: bold;
+    -fx-border-color: #efeeee;
+    -fx-text-fill: black;
+    -fx-border-width: 0.3px
+}
+
+#productosColumn:empty {
+    -fx-border-width: 0px;
+}
+
+#fechaColumn:default{
+    -fx-alignment: CENTER;
+    -fx-background-color: #324960;
+    -fx-border-color: #efeeee;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-border-width: 0.3px
+}
+
+#fechaColumn:empty {
+    -fx-border-width: 0px;
+}
+
+#estadoColumn:default {
+    -fx-alignment: CENTER;
+    -fx-background-color: #58C6A5;
+    -fx-border-color: #efeeee;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-border-width: 0.3px
+}
+
+#estadoColumn:empty {
+    -fx-border-width: 0px;
+}
+*/
+
+#textoTop {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-color: #324960;
+    -fx-border-color: #324960;
+    -fx-border-width: 2;
+}
+
+#textoComandas, #textoFecha {
+    -fx-fill: white;
+}
+
+#fondoBottom {
+    -fx-background-color: #324960;
+}
+
+#comandasButton {
+    -fx-background-color: #5ac8ea;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-text-fill: black;
+}
+
+.table-view .scroll-bar * {
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+    -fx-max-width: 0;
+
+    -fx-min-height: 0;
+    -fx-pref-height: 0;
+    -fx-max-height: 0;
+}
+
+
+/* AddDialog CSS */
+
+#gridAddDialogPrincipal {
+    -fx-background-color: #4fc3a1;
+    -fx-padding: 10;
+}
+
+#dialogAddDialog {
+    -fx-background-color: #4fc3a1;
+}
+
+.separator .line {
+    -fx-background-color: #324960;
+    -fx-pref-height: 5;
+    -fx-border-color: null;
+}
+
+/* AddDialog CSS */
+
+#dialogPrincipalDatos {
+    -fx-background-color: #4fc3a1;
+}
+
+#datosDialogText {
+    -fx-text-alignment: center;
+    -fx-background-color: #4fc3a1;
+    -fx-font-weight: bold;
+    -fx-border-color: #324960;
+    -fx-border-width: 0 0 2 0;
+}
+
+#dialogPrincipalDatos .header-panel .label {
+    -fx-font-size: 1.167em; /* 14px */
+    -fx-font-weight: bold;
+    -fx-background-color: #4fc3a1;
+    -fx-alignment: CENTER;
+    -fx-text-fill: #324960;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #4fc3a1;
+}
+
+.tab {
+    -fx-background-color: #4fc3a1;
+    -fx-border-color: #324960;
+    -fx-font-weight: bold;
+}
+
+.tab:selected {
+    -fx-background-color: #324960;
+    -fx-border-color: #4fc3a1;
+    -fx-font-weight: bold;
+    -fx-text-base-color: #4fc3a1;
+}
+
+#panaderiaChartX {
+    -fx-font-weight: bold;
+}
+
+#panaderiaChartY {
+    -fx-font-weight: bold;
+}
+
+.axis{
+    -fx-tick-label-font-size: 1em;
+    -fx-font-weight: bold;
+}
+
+.chart-bar {
+    -fx-bar-fill: #324960;
+}
+
+.chart-plot-background {
+    -fx-background-color: #4fc3a1;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #ffffff;
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: #ffffff;
+}
+
+/* AlertDialog CSS */
+
+.alertaDialog{
+    -fx-background-color: #4fc3a1;
+}
+.alertaDialog > *.button-bar > *.container {
+    -fx-background-color: #4fc3a1;
+}
+
+.alertaDialog > *.label.content{
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.alertaDialog *.header-panel{
+    -fx-background-color: #4fc3a1;
+}
+.alertaDialog *.header-panel *.label{
+    -fx-font-size: 18px;
+    -fx-font-style: italic;
+    -fx-fill: black;
+}
